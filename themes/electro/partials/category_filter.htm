@@ -1,0 +1,149 @@
+
+
+<input class="filter-alt__toggle" id="filter-alt-toggle" type="checkbox">
+<div class="filter-alt__main">
+    <div class="filter-alt__header">
+        <div class="h2">Фильтр</div>
+        <label class="filter-alt__close" for="filter-alt-toggle"><i class="icon icon-close"></i></label>
+    </div>
+    
+    <div class="select _alt _filled">
+        <div class="select__main">
+            {% if filter.price_from and filter.price_to %}
+                <a class="filter-alt__clear filter-clear-price">
+                    <i class="icon icon-close"></i>
+                </a>
+                <div class="filter-alt__num">{{ filter.price_from }} - {{ filter.price_to }}</div>
+            {% endif %}
+            <div class="select__value">Цена</div>
+            <input class="select__input" type="checkbox">
+        </div>
+        <div class="select__options">
+            <div class="range-double">
+                <div class="input-interval">
+                    <input class="input _border _mini _range1" type="number" name="price_from" value="{{ filter.price_from }}">
+                    <div class="input-interval__separator">—</div>
+                    <input class="input _border _mini _range2" type="number" name="price_to" value="{{ filter.price_to }}">
+                </div>
+                <input class="input-range" type="text" data-min="{{ filter.price_min }}" data-max="{{ filter.price_max }}" data-from="{{ filter.price_from }}" data-to="{{ filter.price_to }}" data-step="100">
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="select _alt _filled">
+        <div class="select__main">
+            {% if filter.manufacturers_checked_count %}
+                <a class="filter-alt__clear" href=""><i class="icon icon-close"></i></a>
+                <div class="filter-alt__num">{{ filter.manufacturers_checked_count }}</div>
+            {% endif %}
+            <div class="select__value">Производитель</div>
+            <input class="select__input" type="checkbox">
+        </div>
+        <div class="select__options">
+            {% for manufacturer in filter.manufacturers %}
+                <label class="checkbox">
+                    <input class="checkbox__input" type="checkbox" name="manufacturers[]" value="{{ manufacturer.manufacturer_id }}" {{ manufacturer.checked ? 'checked' : '' }}>
+                    <span class="checkbox__mask"></span>
+                    <span class="checkbox__label">{{ manufacturer.name }}</span>
+                </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% for attribute in filter.atributy %}
+        {% if attribute.type == 'slide' %}
+            <div class="select _alt">
+                <div class="select__main">
+                    <a class="filter-alt__clear" href=""><i class="icon icon-close"></i></a>
+                    <div class="filter-alt__num">{{ attribute.selected_count }}</div>
+                    <div class="select__value">{{ attribute.name }}</div>
+                    <input class="select__input" type="checkbox">
+                </div>
+                <div class="select__options">
+                    <div class="range-double">
+                        <div class="input-interval">
+                            <input class="input _border _mini _range1" type="number" name="attr{{ attribute.attribute_id }}_from" value="{{ attribute.from }}" data-default="{{  attribute.min }}">
+                            <div class="input-interval__separator">—</div>
+                            <input class="input _border _mini _range2" type="number" name="attr{{ attribute.attribute_id }}_to" value="{{ attribute.to }}" data-default="{{  attribute.max }}">
+                        </div>
+                        <input class="input-range" type="text" data-min="{{ attribute.min }}" data-max="{{ attribute.max }}" data-from="{{ attribute.from }}" data-to="{{ attribute.to }}" data-step="1">
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if attribute.type == 'checkboxes' %}
+            <div class="select _alt">
+                <div class="select__main"><a class="filter-alt__clear" href=""><i class="icon icon-close"></i></a>
+                    <div class="filter-alt__num">{{ attribute.selected_count }}</div>
+                    <div class="select__value">{{ attribute.name }}</div>
+                    <input class="select__input" type="checkbox">
+                </div>
+                <div class="select__options">
+                    {% for value in attribute.values %}
+                    <label class="checkbox">
+                        <input class="checkbox__input" type="checkbox" name="{{ attribute.name }}[]" value="{{ value.value_id }}">
+                        <span class="checkbox__mask"></span>
+                        <span class="checkbox__label">{{ value.name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if attribute.type == 'switch' %}
+            <div class="select _alt">
+                <div class="select__main"><a class="filter-alt__clear" href=""><i class="icon icon-close"></i></a>
+                    <div class="filter-alt__num">{{ attribute.selected_count }}</div>
+                    <div class="select__value">{{ attribute.name }}</div>
+                    <input class="select__input" type="checkbox">
+                </div>
+                <div class="select__options">
+                    {% for value in attribute.values %}
+                    <label class="checkbox">
+                        <input class="checkbox__input" type="checkbox" name="{{ attribute.name }}[]" value="{{ value.value_id }}">
+                        <span class="checkbox__mask"></span>
+                        <span class="checkbox__label">{{ value.name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+    
+    <a class="filter-alt__clear-all link-line" href="">Очистить все</a>
+
+    {#
+    <a class="filter-alt__more link-line" href=""></a>
+    #}
+
+    {#
+    <div class="filter-alt__submit">
+        <a class="btn _mini _full" href=""><span>Показать</span><small>(460)</small></a>
+    </div>
+    #}
+
+</div>
+<label class="filter-alt__btn" for="filter-alt-toggle"><i class="icon icon-filter"></i></label>
+
+<div class="filter-alt__sort">
+    <label class="checkbox _alt">
+        <input name="in_stock" class="checkbox__input" type="checkbox" {{ filter.in_stock ? 'checked' : '' }}><span
+            class="checkbox__mask"></span><span class="checkbox__label">В наличии</span>
+    </label>
+
+    <div class="select _alt">
+        <div class="select__main"><i class="icon icon-sort"></i>
+            <div class="select__value">{{ filter.sort_title ? filter.sort_title : 'Сортировка' }}</div>
+            <input class="select__input" type="checkbox">
+        </div>
+        <div class="select__options">
+            {% for option in filter.sort_options %}
+            <div class="select__option" data-sort="{{ option.sort }}" data-order="{{ option.order }}">{{
+                option.title }}</div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>

@@ -41,10 +41,16 @@ class Product extends Model
             'key' => 'product_id',
             'otherKey' => 'category_id',
             'pivot' => ['product_id', 'category_id', 'main_category'],
+        ],
+
+        'atributy' => [
+            'Alexbeat\Electro\Models\Attribute',
+            'table' => 'oc_product_attribute',
+            'key' => 'product_id',
+            'otherKey' => 'attribute_id',
+            'pivot' => ['product_id', 'attribute_id', 'language_id', 'text'],
         ]
     ];
-
-
 
     public function getThumbAttribute()
     {
@@ -76,6 +82,21 @@ class Product extends Model
     {
         $slug = $this->getSlug();
         return $slug ? '/' . $slug . '/' : null;
+    }
+
+    public function getAttributeGroupsAttribute()
+    {
+        return $this->attributes;
+        // $groups = [];
+        // foreach ($this->attributes as $attribute) {
+        //     if (!isset($groups[$attribute->group])) {
+        //         $groups[$attribute->group] = [];
+        //     }
+        //     $groups[$attribute->group]['attribute_group_id'] = $attribute->group;
+        //     $groups[$attribute->group]['name'] = $attribute->group->name;
+        //     $groups[$attribute->group]['attribute'][] = $attribute;
+        // }
+        // return $groups;
     }
 
     // public function scopeInCategories($query, $categories) {
@@ -115,15 +136,12 @@ class Product extends Model
         // $allCategoryIds = array_merge($allCategoryIds, $categories);
 
         $category = new Category();
-        
+
         $allCategoryIds = $category->getAllSubCategories($categories);
 
         // Filter products by these category ids
-        return $query->whereHas('categories', function($q) use ($allCategoryIds) {
+        return $query->whereHas('categories', function ($q) use ($allCategoryIds) {
             $q->whereIn('oc_product_to_category.category_id', $allCategoryIds);
         });
     }
-
-
-
 }

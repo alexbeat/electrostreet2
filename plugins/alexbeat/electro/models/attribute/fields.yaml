@@ -1,0 +1,18 @@
+fields:
+  attribute_id:
+      label: ID
+      disabled: true
+  attribute_group_id:
+      label: Группа
+      type: relation
+      nameFrom: descriptions[name]
+      span: left
+  name:
+      label: Название
+      type: text
+      relation: descriptions
+      select: name
+      span: right
+  sort_order:
+      label: Сортировка
+      type: number

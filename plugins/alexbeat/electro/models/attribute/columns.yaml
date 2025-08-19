@@ -1,0 +1,17 @@
+columns:
+  attribute_id:
+      searchable: true
+      label: ID
+      sortable: true
+  name:
+      label: Название
+      relation: descriptions
+      select: name
+      searchable: true
+      sortable: true
+  attribute_group_id:
+      label: Группа
+      relation: group
+      select: (select name from oc_attribute_group_description where attribute_group_id = oc_attribute.attribute_group_id limit 1)
+  sort_order:
+      label: Сортировка

@@ -1,5 +1,6 @@
 <?php namespace Alexbeat\Electro;
 
+use Alexbeat\Electro\Services\HelperService;
 use System\Classes\PluginBase;
 
 /**
@@ -20,6 +21,8 @@ class Plugin extends PluginBase
     public function boot()
     {
         \Route::get('/test', 'Alexbeat\Electro\Classes\CatalogController@list');
+
+        new HelperService();
     }
 
     /**
@@ -38,5 +41,27 @@ class Plugin extends PluginBase
      */
     public function registerSettings()
     {
+    }
+
+    public function registerMarkupTags() {
+        return [
+            'filters' => [
+                'briefphone' => function ($value) {
+                    return HelperService::briefphone($value);
+                },
+
+                'includes' => function ($array, $id) {
+                    return in_array($id, $array);
+                },
+
+                'formatPrice' => function ($value, $forceZero = false) {
+                    return HelperService::formatPrice($value, $forceZero);
+                },
+
+                'formatVideoUrl' => function ($url) {
+                    return HelperService::formatVideoUrl($url);
+                },
+            ]
+        ];
     }
 }

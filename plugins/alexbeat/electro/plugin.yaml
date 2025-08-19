@@ -9,6 +9,7 @@ navigation:
         label: Каталог
         url: /
         icon: icon-life-ring
+        order: 10
         sideMenu:
             electro-categories:
                 label: Категории
@@ -22,3 +23,11 @@ navigation:
                 label: Производители
                 url: alexbeat/electro/manufacturers
                 icon: icon-sitemap
+            electro-attributes:
+                label: Атрибуты
+                url: alexbeat/electro/attributes
+                icon: icon-sitemap                
+            electro-productattributes:
+                label: Атрибуты товаров
+                url: alexbeat/electro/productattributes
+                icon: icon-sitemap                   

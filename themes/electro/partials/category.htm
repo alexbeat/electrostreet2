@@ -1,163 +1,153 @@
-{% for product in products %}
-<div class="product">
-    <div class="product__main">
-        <div class="product__slider swiper-parent">
+{% if products|length %}
+    {% for product in products %}
+    <div class="product">
+        <div class="product__main">
+            <div class="product__slider swiper-parent">
 
-            {% if product.isbn %}
-            <a class="product__yb" href="{{ product.isbn }}" target="_blank"><i class="icon icon-yb"></i></a>
-            {% endif %}
-
-            <div class="product__info">
-                {% if product.special %}
-                <div class="label _red">- {{ product.skidka }}</div>
+                {% if product.isbn %}
+                <a class="product__yb" href="{{ product.isbn }}" target="_blank"><i class="icon icon-yb"></i></a>
                 {% endif %}
 
-                {% if product.hit %}
-                <div class="label _yellow">hit</div>
-                {% endif %}
+                <div class="product__info">
+                    {% if product.special %}
+                    <div class="label _red">- {{ product.skidka }}</div>
+                    {% endif %}
 
-                {% if product.new %}
-                <div class="label _green">NEW</div>
-                {% endif %}                
+                    {% if product.hit %}
+                    <div class="label _yellow">hit</div>
+                    {% endif %}
 
-                {#
-                {% if product.product_xdstickers is not empty %}
-                {% for xdsticker in product.product_xdstickers %}
-                <div class="product-preview__label {{xdsticker.id}}">{{xdsticker.text}}</div>
-                {% endfor %}
-                {% endif %}
-                #}
-                {% if product.rating %}
-                    <div class="rate"><i class="icon icon-star"></i><span>{{ product.rating }}</span></div>
-                {% endif %}
-            </div>
-            <div class="swiper _single">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <a href="{{ product.href }}">
-                            <img src="{{ product.thumb }}" alt="{{ product.name }}">
-                        </a>
-                    </div>
-                    {% for image in product.images %}
-                    <div class="swiper-slide">
-                        <a href="{{ product.href }}">
-                            <img src="{{ image }}" alt="{{ product.name }}">
-                        </a>
-                    </div>
-                    {% endfor %}
+                    {% if product.new %}
+                    <div class="label _green">NEW</div>
+                    {% endif %}                
+
+                    {% if product.rating %}
+                        <div class="rate"><i class="icon icon-star"></i><span>{{ product.rating }}</span></div>
+                    {% endif %}
                 </div>
-                <div class="swiper-pagination"></div>
+                <div class="swiper _single">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <a href="{{ product.href }}">
+                                <img src="{{ product.thumb }}" alt="{{ product.name }}">
+                            </a>
+                        </div>
+                        {% for image in product.images %}
+                        <div class="swiper-slide">
+                            <a href="{{ product.href }}">
+                                <img src="{{ image }}" alt="{{ product.name }}">
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+            <div class="params">
+                    {% for attribute in product.atributy %}
+                        
+                        {#Атрибут:{{ attribute['attribute_id'] }}#}
+                        
+                        {% if attribute['attribute_id']=='15' %}
+                        <div class="param">
+                            <div class="param__value">{{ attribute['text'] }} кг</div>
+                            <div class="param__label">Вес</div>
+                        </div>
+                        {% endif %}
+
+                        {% if attribute['attribute_id']=='12' %}
+                        <div class="param">
+                            <div class="param__value">{{ attribute['text'] }} км/ч</div>
+                            <div class="param__label">Скорость</div>
+                        </div>
+                        {% endif %}
+
+                        {% if attribute['attribute_id']=='221' %}
+                        <div class="param">
+                            <div class="param__value">{{ attribute['text'] }}</div>
+                            <div class="param__label">Мощность</div>
+                        </div>
+                        {% endif %}
+
+                        {% if attribute['attribute_id']=='13' %}
+                        <div class="param">
+                            <div class="param__value">{{ attribute['text'] }} км</div>
+                            <div class="param__label">Запас хода</div>
+                        </div>
+                        {% endif %}
+
+                        {% if attribute['attribute_id']=='14' %}
+                        <div class="param">
+                            <div class="param__value">{{ attribute['text'] }}''</div>
+                            <div class="param__label">Диаметр</div>
+                        </div>
+                        {% endif %}
+
+                        {% if attribute['attribute_id']=='933' %}
+                        <div class="param">
+                            <div class="param__value">{{ attribute['text'] }} куб.см</div>
+                            <div class="param__label">Объем двигателя</div>
+                        </div>
+                        {% endif %}         
+
+                        {% if attribute['attribute_id']=='28' %}
+                        <div class="param">
+                            <div class="param__value">{{ attribute['text'] }}</div>
+                            <div class="param__label">Рама</div>
+                        </div>
+                        {% endif %}    
+
+
+
+                    {% endfor %}
+            </div>
+        </div><a href="{{ product.href }}"><b>{{ product.name }}</b></a>
+        <div class="product__price">
+            <div class="price">
+                {% if product.special %}
+                <s>{{ product.price|formatPrice }}</s><span>{{ product.special|formatPrice }}</span>
+                {% else %}
+                <span>{{ product.price|formatPrice }}</span>
+                {% endif %}
+            </div>
+            <div class="product__btns">
+                <div class="product__links">
+
+                    <label class="add-icon" onclick="compare.add('{{ product.product_id }}');">
+                        <input class="add-icon__input" type="checkbox"><i class="icon icon-scale"></i>
+                    </label>
+
+                    <label class="add-icon" onclick="wishlist.add('{{ product.product_id }}');">
+                        <input class="add-icon__input" type="checkbox"><i class="icon icon-heart-empty"></i>
+                    </label>
+
+                </div>
+                
+                {% if (product.quantity > 0) %}
+                    <a class="btn" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"
+                    style="cursor: pointer;">В корзину</a>
+                {% else %}
+                    <a class="btn" href="{{ product.href }}">Уточнить наличие</a>
+                {% endif %}
             </div>
         </div>
-        <div class="params">
-            {% if (product['attribute_groups']) %}
+    </div>
 
-            {% for attribute_group in product['attribute_groups'] %}
-                {#Группа:{{ attribute_group['name'] }}#}
-                {% for attribute in attribute_group['attribute'] %}
-                    
-                    {#Атрибут:{{ attribute['attribute_id'] }}#}
-                    
-                    {% if attribute['attribute_id']=='15' %}
-                    <div class="param">
-                        <div class="param__value">{{ attribute['text'] }} кг</div>
-                        <div class="param__label">Вес</div>
-                    </div>
-                    {% endif %}
-
-                    {% if attribute['attribute_id']=='12' %}
-                    <div class="param">
-                        <div class="param__value">{{ attribute['text'] }} км/ч</div>
-                        <div class="param__label">Скорость</div>
-                    </div>
-                    {% endif %}
-
-                    {% if attribute['attribute_id']=='221' %}
-                    <div class="param">
-                        <div class="param__value">{{ attribute['text'] }}</div>
-                        <div class="param__label">Мощность</div>
-                    </div>
-                    {% endif %}
-
-                    {% if attribute['attribute_id']=='13' %}
-                    <div class="param">
-                        <div class="param__value">{{ attribute['text'] }} км</div>
-                        <div class="param__label">Запас хода</div>
-                    </div>
-                    {% endif %}
-
-                    {% if attribute['attribute_id']=='14' %}
-                    <div class="param">
-                        <div class="param__value">{{ attribute['text'] }}''</div>
-                        <div class="param__label">Диаметр</div>
-                    </div>
-                    {% endif %}
-
-                    {% if attribute['attribute_id']=='933' %}
-                    <div class="param">
-                        <div class="param__value">{{ attribute['text'] }} куб.см</div>
-                        <div class="param__label">Объем двигателя</div>
-                    </div>
-                    {% endif %}         
-
-                    {% if attribute['attribute_id']=='28' %}
-                    <div class="param">
-                        <div class="param__value">{{ attribute['text'] }}</div>
-                        <div class="param__label">Рама</div>
-                    </div>
-                    {% endif %}    
-
-                {% endfor %}
-
-            {% endfor %}
-
-            {% endif %}
-        </div>
-    </div><a href="{{ product.href }}"><b>{{ product.name }}</b></a>
-    <div class="product__price">
-        <div class="price">
-            {% if product.special %}
-            <s>{{ product.price }}</s><span>{{ product.special }}</span>
-            {% else %}
-            <span>{{ product.price }}</span>
-            {% endif %}
-        </div>
-        <div class="product__btns">
-            <div class="product__links">
-
-                <label class="add-icon" onclick="compare.add('{{ product.product_id }}');">
-                    <input class="add-icon__input" type="checkbox"><i class="icon icon-scale"></i>
-                </label>
-
-
-
-                <label class="add-icon" onclick="wishlist.add('{{ product.product_id }}');">
-                    <input class="add-icon__input" type="checkbox"><i class="icon icon-heart-empty"></i>
-                </label>
-
-            </div>
-            
-            {% if (product.quantity > 0) %}
-                <a class="btn" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"
-                style="cursor: pointer;">В корзину</a>
-            {% else %}
-                <a class="btn" href="{{ product.href }}">Уточнить наличие</a>
-            {% endif %}
+    {% if (loop.index == 3) and (page == 1) %}
+    <div class="manager"><img src="/assets/img/manager2.png" alt="">
+        <div class="manager__header"><b>Задайте вопрос эксперту</b><small>Мы на связи с 10:00 до 20:00
+                ежедневно</small></div>
+        <div class="manager__social">
+            <a href="{{ fias_telegram }}"><i class="icon icon-telegram"></i></a>
+            <a href="{{ fias_whatsapp }}"><i class="icon icon-whatsapp-fill"></i></a>
+            <a href="tel:{{ fias_phone_main }}"><i class="icon icon-call"></i></a>
+            <a href="mailto:{{ fias_contact_mail }}"><i class="icon icon-email2"></i></a>
         </div>
     </div>
-</div>
+    {% endif %}
 
-{% if (loop.index == 3) and (page == 1) %}
-<div class="manager"><img src="/assets/img/manager2.png" alt="">
-    <div class="manager__header"><b>Задайте вопрос эксперту</b><small>Мы на связи с 10:00 до 20:00
-            ежедневно</small></div>
-    <div class="manager__social">
-        <a href="{{ fias_telegram }}"><i class="icon icon-telegram"></i></a>
-        <a href="{{ fias_whatsapp }}"><i class="icon icon-whatsapp-fill"></i></a>
-        <a href="tel:{{ fias_phone_main }}"><i class="icon icon-call"></i></a>
-        <a href="mailto:{{ fias_contact_mail }}"><i class="icon icon-email2"></i></a>
-    </div>
-</div>
+    {% endfor %}
+{% else %}
+    <div class="product__empty">Товары не найдены</div>
 {% endif %}
 
-{% endfor %}

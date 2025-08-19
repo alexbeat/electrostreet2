@@ -5,7 +5,7 @@ url = "/test2"
 
 ==
 function onStart()
-// use Alexbeat\Electro\Models\Product;
+use Alexbeat\Electro\Models\Product;
 {
 //     $products = Product::paginate();
 // // print_r($products->toArray());
@@ -15,6 +15,13 @@ function onStart()
 //     ];
 //     $this['result'] = json_encode($result);
 //     // echo $this['result'];
+
+$product = Product::find(17576);
+print_r($product->toArray());
+print_r($product->attributes2()->get()->toArray());
+// print_r($product->attribute_groups);
+
+
 }
 ==
-{% component 'catalog' %}
+{#{% component 'catalog' %}#}
