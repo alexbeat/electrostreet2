@@ -1,0 +1,10 @@
+name: Manufacturers
+form: $/alexbeat/electro/models/manufacturer/fields.yaml
+modelClass: Alexbeat\Electro\Models\Manufacturer
+defaultRedirect: alexbeat/electro/manufacturers
+create:
+    redirect: 'alexbeat/electro/manufacturers/update/:manufacturer_id'
+    redirectClose: alexbeat/electro/manufacturers
+update:
+    redirect: alexbeat/electro/manufacturers
+    redirectClose: alexbeat/electro/manufacturers

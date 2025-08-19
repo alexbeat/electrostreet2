@@ -18,3 +18,7 @@ navigation:
                 label: Товары
                 url: alexbeat/electro/products
                 icon: icon-sitemap
+            electro-manufacturers:
+                label: Производители
+                url: alexbeat/electro/manufacturers
+                icon: icon-sitemap

@@ -1,0 +1,15 @@
+fields:
+  name:
+    label: Название
+    type: text
+    span: left
+    relation: descriptions
+    select: name
+  image:
+    label: Картинка
+    type: text
+    span: right
+  sort_order:
+    label: Сортировка
+    type: number
+  # Добавьте другие поля и связанные данные

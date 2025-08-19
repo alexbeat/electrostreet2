@@ -19,14 +19,19 @@ class Plugin extends PluginBase
      */
     public function boot()
     {
+        \Route::get('/test', 'Alexbeat\Electro\Classes\CatalogController@list');
     }
 
     /**
      * registerComponents used by the frontend.
      */
-    public function registerComponents()
-    {
-    }
+
+     public function registerComponents()
+     {
+         return [
+             'Alexbeat\Electro\Components\Catalog' => 'catalog',
+         ];
+     }
 
     /**
      * registerSettings used by the backend.

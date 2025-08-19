@@ -13,7 +13,13 @@ columns:
         options:
             mode: crop
             quality: 90         
-
+    name:
+        label: Название
+        relation: descriptions
+        select: name
+        # conditions: "language_id = 1" # 1 — id русского языка в oc_category_description
+        searchable: true
+        sortable: true
     parent_id:
         label: Родитель
     top:
@@ -26,8 +32,3 @@ columns:
     date_modified:
         label: Дата изменения
     # Пример вывода связанных данных (название категории на русском)
-    name:
-        label: Название (RU)
-        relation: descriptions
-        select: name
-        conditions: "language_id = 1" # 1 — id русского языка в oc_category_description

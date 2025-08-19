@@ -1,0 +1,21 @@
+columns:
+  manufacturer_id:
+    label: ID
+    searchable: true
+    sortable: true
+  name:
+    label: Название
+    relation: description
+    select: name
+    sortable: true
+    searchable: true
+  image:
+      label: Изображение
+      type: image
+      width: 100
+      height: 100
+      options:
+          mode: crop
+          quality: 90   
+  sort_order:
+    label: Сортировка
