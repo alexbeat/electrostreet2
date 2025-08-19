@@ -1,0 +1,47 @@
+fields:
+    category_id:
+        label: ID
+        disabled: true
+    parent_id:
+        label: Родитель
+    top:
+        label: Top
+        type: switch
+    sort_order:
+        label: Сортировка
+    status:
+        label: Статус
+        type: switch
+    date_added:
+        label: Дата добавления
+        disabled: true
+    date_modified:
+        label: Дата изменения
+        disabled: true
+    # Связанные описания
+    # descriptions:
+    #     label: Описания
+    #     type: repeater
+    #     form:
+    #         fields:
+    #             language_id:
+    #                 label: Язык
+    #             name:
+    #                 label: Название
+    #             description:
+    #                 label: Описание
+    #                 type: textarea
+    #             meta_title:
+    #                 label: Meta Title
+    #             meta_description:
+    #                 label: Meta Description
+    #             meta_keyword:
+    #                 label: Meta Keyword
+    # # Связь с магазинами
+    # stores:
+    #     label: Магазины
+    #     type: repeater
+    #     form:
+    #         fields:
+    #             store_id:
+    #                 label: ID магазина

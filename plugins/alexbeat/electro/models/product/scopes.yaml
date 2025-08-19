@@ -1,0 +1,79 @@
+scopes:
+    product_id:
+        label: 'ID'
+        type: number
+        conditions: product_id = :filtered
+        
+    status:
+        label: 'Активен'
+        type: switch
+        conditions:
+            - status <> 1
+            - status = 1
+    
+    # name:
+    #     label: 'Название'
+    #     type: text
+    #     conditions: name like :filtered
+    
+    # model:
+    #     label: 'Модель'
+    #     type: text
+    #     conditions: model like :filtered
+    
+    sku:
+        label: 'Артикул'
+        type: text
+        conditions: sku like :filtered
+    
+    quantity:
+        label: 'Количество'
+        type: number
+        conditions: quantity = :filtered
+    
+    stock_status_id:
+        label: 'Статус наличия'
+        type: dropdown
+        conditions: stock_status_id = :filtered
+        
+    # manufacturer_id:
+    #     label: 'Производитель'
+    #     type: dropdown
+    #     modelClass: 'Vendor\Plugin\Models\Manufacturer'
+    #     nameFrom: 'name'
+    #     conditions: manufacturer_id = :filtered
+    
+    price:
+        label: 'Цена'
+        type: number
+        conditions: 
+          between: true
+    
+    hit:
+        label: 'Популярность'
+        type: switch
+        conditions:
+            - hit <> 1
+            - hit = 1
+    
+    rating:
+        label: 'Рейтинг'
+        type: number
+        conditions: 
+          between: true
+    
+    viewed:
+        label: 'Просмотры'
+        type: number
+        conditions: 
+          between: true
+    
+    date_added:
+        label: 'Дата добавления'
+        type: daterange
+    
+    date_modified:
+        label: 'Дата изменения'
+        type: daterange
+
+

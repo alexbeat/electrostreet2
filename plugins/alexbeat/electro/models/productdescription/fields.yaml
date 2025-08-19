@@ -1,0 +1,12 @@
+tabs:
+    fields:
+        name:
+            label: Название
+            required: true
+            span: auto
+            tab: Основное
+        description:
+            label: Описание
+            type: richeditor
+            span: auto
+            tab: Основное

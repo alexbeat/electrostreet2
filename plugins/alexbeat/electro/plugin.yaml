@@ -1,0 +1,20 @@
+plugin:
+    name: 'alexbeat.electro::lang.plugin.name'
+    description: 'alexbeat.electro::lang.plugin.description'
+    author: alexbeat
+    icon: oc-icon-adjust
+    homepage: ''
+navigation:
+    electro-catalog:
+        label: Каталог
+        url: /
+        icon: icon-life-ring
+        sideMenu:
+            electro-categories:
+                label: Категории
+                url: alexbeat/electro/categories
+                icon: icon-sitemap
+            electro-products:
+                label: Товары
+                url: alexbeat/electro/products
+                icon: icon-sitemap

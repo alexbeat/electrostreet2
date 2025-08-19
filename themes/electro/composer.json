@@ -1,0 +1,8 @@
+{
+    "name": "alexbeat/electro-theme",
+    "type": "october-theme",
+    "description": "Electro",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}

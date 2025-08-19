@@ -1,0 +1,13 @@
+columns:
+    product_id:
+        label: ID
+        searchable: true
+        sortable: true
+    name:
+        label: Название
+        searchable: true
+        sortable: true
+    language_id:
+        label: Язык
+        searchable: true
+        sortable: true

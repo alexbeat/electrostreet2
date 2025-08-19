@@ -1,0 +1,35 @@
+title = "Каталог"
+url = "/test"
+==
+function onStart()
+{
+    // Укажите нужный путь
+    $directory = '/var/www/electrostreet/data/www/electrostreet.ru/image/catalog';
+
+    // Получите список всех файлов и папок в директории
+    $items = scandir($directory);
+
+    // Отфильтруйте файлы, исключая '.' и '..'
+    $this['fileList'] = array_filter($items, function($item) use ($directory) {
+        return is_file($directory . '/' . $item);
+    });
+
+    // Отфильтруйте каталоги, исключая '.' и '..'
+    $this['directoryList'] = array_filter($items, function($item) use ($directory) {
+        return is_dir($directory . '/' . $item) && !in_array($item, ['.', '..']);
+    }); 
+}
+==
+<h3>Каталоги:</h3>
+<ul>
+    {% for dir in directoryList %}
+        <li>{{ dir }}</li>
+    {% endfor %}
+</ul>
+
+<h3>Файлы:</h3>
+<ul>
+    {% for file in fileList %}
+        <li>{{ file }}</li>
+    {% endfor %}
+</ul>

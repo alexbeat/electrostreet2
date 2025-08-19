@@ -1,0 +1,68 @@
+columns:
+    product_id:
+        label: №
+        searchable: true
+        sortable: true
+    status:
+        label: Активен
+        type: switch
+        sortable: true
+    image:
+        label: Изображение
+        type: image
+        width: 100
+        height: 100
+        options:
+            mode: crop
+            quality: 90                
+    name:
+        label: Название
+        relation: description
+        select: name
+        sortable: true
+
+    model:
+        label: Модель
+        searchable: true
+        sortable: true
+    sku:
+        label: Артикул
+        searchable: true
+        sortable: true
+    # isbn:
+    #     label: Видео
+    #     searchable: true
+    #     sortable: true
+    quantity:
+        label: Количество
+        sortable: true
+    stock_status_id:
+        label: Статус наличия
+        sortable: true
+    manufacturer_id:
+        label: Производитель
+        sortable: true
+    #shipping
+    price:
+        label: Цена
+        searchable: true
+        sortable: true
+
+    hit:
+        label: Популярность
+        type: switch
+        sortable: true
+    rating:
+        label: Рейтинг
+        sortable: true
+
+    viewed: 
+        label: Просмотры
+        sortable: true
+    date_added:
+        label: Дата добавления
+        sortable: true
+    date_modified:
+        label: Дата изменения
+        sortable: true
+

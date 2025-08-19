@@ -1,0 +1,10 @@
+name: Products
+form: $/alexbeat/electro/models/product/fields.yaml
+modelClass: Alexbeat\Electro\Models\Product
+defaultRedirect: alexbeat/electro/products
+create:
+    redirect: 'alexbeat/electro/products/update/:product_id'
+    redirectClose: alexbeat/electro/products
+update:
+    redirect: alexbeat/electro/products
+    redirectClose: alexbeat/electro/products

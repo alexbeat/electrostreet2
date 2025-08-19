@@ -1,0 +1,65 @@
+tabs:
+  fields:
+    # product_id:
+    #     label: ID
+    #     tab: Основное
+
+    status:
+      label: Статус
+      type: switch
+      span: auto
+      tab: Основное
+
+    # name:
+    #     label: Название
+    #     relation: description
+    #     select: name
+    #     tab: Основное
+
+    model:
+      label: Модель
+      span: auto
+      tab: Основное
+
+    sku:
+      label: Артикул
+      span: auto
+      tab: Основное
+
+    quantity:
+      label: Количество
+      span: auto
+      tab: Основное
+
+    stock_status_id:
+      label: Статус наличия
+      span: auto
+      tab: Основное
+
+    image:
+      label: Изображение
+      type: mediafinder
+      mode: image
+      span: auto
+      tab: Основное
+
+    manufacturer_id:
+      label: Производитель
+      span: auto
+      tab: Основное
+
+    price:
+      label: Цена
+      span: auto
+      tab: Основное
+
+    hit:
+      label: Популярность
+      type: switch
+      span: auto
+      tab: Основное
+
+    rating:
+      label: Рейтинг
+      span: auto
+      tab: Основное

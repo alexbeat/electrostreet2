@@ -1,0 +1,10 @@
+name: Categories
+form: $/alexbeat/electro/models/category/fields.yaml
+modelClass: Alexbeat\Electro\Models\Category
+defaultRedirect: alexbeat/electro/categories
+create:
+    redirect: 'alexbeat/electro/categories/update/:category_id'
+    redirectClose: alexbeat/electro/categories
+update:
+    redirect: alexbeat/electro/categories
+    redirectClose: alexbeat/electro/categories
