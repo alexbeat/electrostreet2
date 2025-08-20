@@ -33,13 +33,13 @@ class CatalogController extends Controller
         }
 
         // фильтр по цене
-        if (input('price_from')) {
-            $products_query->where('price', '>=', input('price_from'));
-        }
+        // if (input('price_from')) {
+        //     $products_query->where('price', '>=', input('price_from'));
+        // }
 
-        if (input('price_to')) {
-            $products_query->where('price', '<=', input('price_to'));
-        }
+        // if (input('price_to')) {
+        //     $products_query->where('price', '<=', input('price_to'));
+        // }
 
         // проход по input-параметрам для фильтрации по атрибутам
         foreach (request()->all() as $key => $value) {
@@ -47,7 +47,7 @@ class CatalogController extends Controller
                 $nn = $matches[1];
                 // if ($nn != 12) continue;
                 $from = (float) input("attr{$nn}_from");
-                $products_query->whereHas('atributy', function($query) use ($nn, $from) {
+                $products_query->whereHas('atributy', function ($query) use ($nn, $from) {
                     $query->where('oc_product_attribute.attribute_id', $nn)
                         ->whereRaw('CAST(text AS DECIMAL) >= ?', [$from]);
                 });
@@ -57,11 +57,23 @@ class CatalogController extends Controller
                 $nn = $matches[1];
                 // if ($nn != 12) continue;
                 $to = (float) input("attr{$nn}_to");
-                $products_query->whereHas('atributy', function($query) use ($nn, $to) {
+                $products_query->whereHas('atributy', function ($query) use ($nn, $to) {
                     $query->where('oc_product_attribute.attribute_id', $nn)
                         ->whereRaw('CAST(text AS DECIMAL) <= ?', [$to]);
                 });
             }
+
+            if (preg_match('/attr(\d+)/', $key, $matches)) {
+                $nn = $matches[1];
+                if (!is_array(input("attr{$nn}"))) continue;
+
+                $list_values = (array)input("attr{$nn}");
+                // print_r($list_values);
+                $products_query->whereHas('atributy', function ($query) use ($nn, $list_values) {
+                    $query->where('oc_product_attribute.attribute_id', $nn)
+                        ->whereIn('text', $list_values);
+                });
+            }            
         }
 
 
@@ -91,10 +103,15 @@ class CatalogController extends Controller
         // пагинация
         $products_query = $products_query->paginate();
 
-
+        // print_r($products_query->get()->toArray());
 
         $list_content = $this->renderPartial('category', [
-            'products' => $products_query
+            'products' => $products_query,
+            'page' => input('page', 1),
+            'fias_telegram' => '',
+            'fias_whatsapp' => '',
+            'fias_phone_main' => '',
+            'fias_contact_mail' => '',
         ]);
 
         $pagination_content = $this->renderPartial('category_pagination', [
@@ -108,33 +125,78 @@ class CatalogController extends Controller
         ]);
     }
 
+
+
     private function prepare_filter($products_query)
     {
         $productIds = $products_query->get()->pluck('product_id');
 
         $attributeIds = [
-            12, 13, 14, 15
+            12, 13, 14, 15, 28, 221, 933,
         ];
+
+        $slider_attributes = [
+            12, 13, 15, 221, 933,
+        ];
+
+        $checkboxes_attributes = [
+            28, 14,
+        ];
+
+        $switch_attributes = [];
+
         $atributy = AttributeModel::whereIn('attribute_id', $attributeIds)->get();
 
-        $atributy->each(function ($atribut) use ($productIds) {
+        $atributy->each(function ($atribut) use ($productIds, $slider_attributes, $checkboxes_attributes, $switch_attributes) {
             $pa_query = ProductAttribute::query()
                 ->where('attribute_id', $atribut->attribute_id)
                 ->whereIn('product_id', $productIds);
 
-            // Преобразовываем текстовые данные в числа для поиска min и max
-            $atribut->min = $pa_query->selectRaw('MIN(CAST(text AS DECIMAL)) as min_value')->value('min_value');
-            $atribut->max = $pa_query->selectRaw('MAX(CAST(text AS DECIMAL)) as max_value')->value('max_value');
-            $atribut->from = input('attr' . $atribut->attribute_id . '_from', $atribut->min);
-            $atribut->to = input('attr' . $atribut->attribute_id . '_to', $atribut->max);
+            if (in_array($atribut->attribute_id, $slider_attributes)) {
+                $atribut->type = 'slide';
 
-            $atribut->type = 'slide';
+                // Преобразовываем текстовые данные в числа для поиска min и max
+                $atribut->min = $pa_query->selectRaw('MIN(CAST(text AS DECIMAL)) as min_value')->value('min_value');
+                $atribut->max = $pa_query->selectRaw('MAX(CAST(text AS DECIMAL)) as max_value')->value('max_value');
+                $atribut->from = input('attr' . $atribut->attribute_id . '_from', $atribut->min);
+                $atribut->to = input('attr' . $atribut->attribute_id . '_to', $atribut->max);
+            }
+
+            if (in_array($atribut->attribute_id, $checkboxes_attributes)) {
+                $atribut->type = 'checkboxes';
+
+                // Правильное использование distinct и select
+                $uniqueTextsQuery = $pa_query->select('text')->distinct();
+                $atribut->selected_count = $uniqueTextsQuery->count();
+                // echo $atribut->selected_count;
+
+                // Получение уникальных значений
+                $atribut->values = $uniqueTextsQuery->take(20)->get(); //берем макс. 20
+
+                $search_values = (array)input('attr' . $atribut->attribute_id);
+                // print_r($search_values);
+
+                $selected_count = 0;
+                $atribut->values->each(function ($value) use ($search_values, &$selected_count) {
+                    if (in_array($value->text, $search_values)) {
+                        $value->checked = true;
+                        $selected_count++;
+                    } else {
+                        $value->checked = false;
+                    }
+                });
+                $atribut->selected_count = $selected_count;
+
+                // print_r($atribut->values->toArray());
+            }
+
+            if (in_array($atribut->attribute_id, $switch_attributes)) $atribut->type = 'switch';
         });
 
 
 
         $manufacturerIds = $products_query->distinct()->pluck('manufacturer_id');
-        $manufacturers = Manufacturer::whereIn('manufacturer_id', $manufacturerIds)->get();
+        $manufacturers = Manufacturer::whereIn('manufacturer_id', $manufacturerIds)->orderBy('name')->get();
         $search_manufacturers = explode(',', input('manufacturers'));
 
         $manufacturers_checked_count = 0;
