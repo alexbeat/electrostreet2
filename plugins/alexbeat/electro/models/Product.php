@@ -34,6 +34,10 @@ class Product extends Model
         'description' => ['Alexbeat\Electro\Models\ProductDescription', 'key' => 'product_id', 'otherKey' => 'product_id'],
     ];
 
+    public $hasMany = [
+        'images' => ['Alexbeat\Electro\Models\ProductImage', 'key' => 'product_id', 'otherKey' => 'product_id'],
+    ];
+
     public $belongsToMany = [
         'categories' => [
             'Alexbeat\Electro\Models\Category',
@@ -51,6 +55,7 @@ class Product extends Model
             'pivot' => ['product_id', 'attribute_id', 'language_id', 'text'],
         ]
     ];
+    
 
     public function getThumbAttribute()
     {
@@ -84,37 +89,9 @@ class Product extends Model
         return $slug ? '/' . $slug . '/' : null;
     }
 
-    public function getAttributeGroupsAttribute()
-    {
-        return $this->attributes;
-        // $groups = [];
-        // foreach ($this->attributes as $attribute) {
-        //     if (!isset($groups[$attribute->group])) {
-        //         $groups[$attribute->group] = [];
-        //     }
-        //     $groups[$attribute->group]['attribute_group_id'] = $attribute->group;
-        //     $groups[$attribute->group]['name'] = $attribute->group->name;
-        //     $groups[$attribute->group]['attribute'][] = $attribute;
-        // }
-        // return $groups;
+    public function getLimitedImagesAttribute() {
+        return $this->images()->take(4)->get();
     }
-
-    // public function scopeInCategories($query, $categories) {
-    //     return $query->whereIn('category_id', $categories);
-    // }
-
-    // public function scopeInCategories($query, array $categoryIds)
-    // {
-    //     $categoryModel = new Category();
-    //     $allCategoryIds = $categoryModel->getAllSubCategories($categoryIds);
-
-    //     return $query->whereIn('product_id', function($query) use ($allCategoryIds) {
-    //         $query->select('product_id')
-    //             ->from('oc_product_to_category')
-    //             ->whereIn('category_id', $allCategoryIds);
-    //     });
-    // }    
-
 
     public function scopeInCategories($query, $categories)
     {

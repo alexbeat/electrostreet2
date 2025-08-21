@@ -6,10 +6,10 @@
         <div class="h2">Фильтр</div>
         <label class="filter-alt__close" for="filter-alt-toggle"><i class="icon icon-close"></i></label>
     </div>
-    
-    <div class="select _alt _filled">
+    {% set show_price_range = filter.price_from and filter.price_from != filter.price_min or filter.price_to and filter.price_to != filter.price_max %}
+    <div class="select _alt {{ show_price_range ? '_filled' : ''}}">
         <div class="select__main">
-            {% if filter.price_from != filter.price_min or filter.price_to != filter.price_max %}
+            {% if show_price_range %}
                 <a class="filter-alt__clear" data-clear="price_from" data-clear2="price_to">
                     <i class="icon icon-close"></i>
                 </a>
@@ -147,6 +147,8 @@
         <div class="select__main"><i class="icon icon-sort"></i>
             <div class="select__value">{{ filter.sort_title ? filter.sort_title : 'Сортировка' }}</div>
             <input class="select__input" type="checkbox">
+            <input type="hidden" name="sort" value="{{ filter.sort }}">
+            <input type="hidden" name="order" value="{{ filter.order }}">            
         </div>
         <div class="select__options">
             {% for option in filter.sort_options %}

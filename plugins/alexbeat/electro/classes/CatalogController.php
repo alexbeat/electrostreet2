@@ -8,6 +8,7 @@ use Alexbeat\Electro\Models\Product;
 use Alexbeat\Electro\Models\Attribute as AttributeModel;
 use Alexbeat\Electro\Models\Manufacturer;
 use Alexbeat\Electro\Models\ProductAttribute;
+use Request;
 
 class CatalogController extends Controller
 {
@@ -15,8 +16,14 @@ class CatalogController extends Controller
     {
         $products_query = Product::query()->with('description', 'atributy');
 
+        $category_id = input('category_id');
+        if (!$category_id) {
+            //return 404
+            abort(404);
+        }
+
         // фильтр категории
-        $products_query = $products_query->inCategories([740]);
+        $products_query = $products_query->inCategories([(int)$category_id]);
 
 
         $filter_content = $this->prepare_filter($products_query);
@@ -33,13 +40,13 @@ class CatalogController extends Controller
         }
 
         // фильтр по цене
-        // if (input('price_from')) {
-        //     $products_query->where('price', '>=', input('price_from'));
-        // }
+        if (input('price_from')) {
+            $products_query->where('price', '>=', input('price_from'));
+        }
 
-        // if (input('price_to')) {
-        //     $products_query->where('price', '<=', input('price_to'));
-        // }
+        if (input('price_to')) {
+            $products_query->where('price', '<=', input('price_to'));
+        }
 
         // проход по input-параметрам для фильтрации по атрибутам
         foreach (request()->all() as $key => $value) {
@@ -107,11 +114,12 @@ class CatalogController extends Controller
 
         $list_content = $this->renderPartial('category', [
             'products' => $products_query,
+            'category_id' => $category_id,
             'page' => input('page', 1),
-            'fias_telegram' => '',
-            'fias_whatsapp' => '',
-            'fias_phone_main' => '',
-            'fias_contact_mail' => '',
+            'fias_telegram' => input('fias_telegram'),
+            'fias_whatsapp' => input('fias_whatsapp'),
+            'fias_phone_main' => input('fias_phone_main'),
+            'fias_contact_mail' => input('fias_contact_mail'),
         ]);
 
         $pagination_content = $this->renderPartial('category_pagination', [
@@ -207,13 +215,13 @@ class CatalogController extends Controller
             }
         });
 
-        $price_min = $products_query->min('price');
-        $price_max = $products_query->max('price');
+        $price_min = (int)$products_query->min('price');
+        $price_max = (int)$products_query->max('price');
 
 
 
         $data = [];
-        $data['sort'] = input('sort', 'popular');
+        $data['sort'] = input('sort', 'p.hit');
         $data['order'] = input('order', 'desc');
 
         // Массив с опциями сортировки
@@ -261,6 +269,8 @@ class CatalogController extends Controller
             'in_stock' => input('in_stock'),
             'sort_title' => $data['sort_title'],
             'sort_options' => $data['sort_options'],
+            'sort' => $data['sort'],
+            'order' => $data['order'],
             'price_from' => input('price_from'),
             'price_to' => input('price_to'),
             'price_min' => $price_min,

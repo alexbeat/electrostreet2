@@ -32,10 +32,10 @@
                                 <img src="{{ product.thumb }}" alt="{{ product.name }}">
                             </a>
                         </div>
-                        {% for image in product.images %}
+                        {% for image in product.limited_images %}
                         <div class="swiper-slide">
                             <a href="{{ product.href }}">
-                                <img src="{{ image }}" alt="{{ product.name }}">
+                                <img src="{{ image.thumb }}" alt="{{ product.name }}">
                             </a>
                         </div>
                         {% endfor %}
@@ -150,4 +150,5 @@
 {% else %}
     <div class="product__empty">Товары не найдены</div>
 {% endif %}
+<input type="hidden" name="category_id" value="{{ category_id }}" />
 

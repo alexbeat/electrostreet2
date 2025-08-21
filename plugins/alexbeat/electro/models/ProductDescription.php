@@ -10,6 +10,8 @@ class ProductDescription extends Model
 
     protected $table = 'oc_product_description';
     protected $primaryKey = 'product_id';
+    public $incrementing = false;
+    public $timestamps = false;    
 
     public $rules = [];
 

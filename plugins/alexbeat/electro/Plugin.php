@@ -20,7 +20,8 @@ class Plugin extends PluginBase
      */
     public function boot()
     {
-        \Route::get('/test', 'Alexbeat\Electro\Classes\CatalogController@list');
+        \Route::get('/api/catalog/list', 'Alexbeat\Electro\Classes\CatalogController@list');
+        \Route::post('/api/catalog/list', 'Alexbeat\Electro\Classes\CatalogController@list');
 
         new HelperService();
     }
