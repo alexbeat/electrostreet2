@@ -36,6 +36,9 @@ class Product extends Model
 
     public $hasMany = [
         'images' => ['Alexbeat\Electro\Models\ProductImage', 'key' => 'product_id', 'otherKey' => 'product_id'],
+        'product_to_store' => ['Alexbeat\Electro\Models\ProductToStore', 'key' => 'product_id', 'otherKey' => 'product_id'],
+        'product_discount' => ['Alexbeat\Electro\Models\ProductDiscount', 'key' => 'product_id', ],
+        'product_special' => ['Alexbeat\Electro\Models\ProductSpecial', 'key' => 'product_id', ],
     ];
 
     public $belongsToMany = [
@@ -53,7 +56,15 @@ class Product extends Model
             'key' => 'product_id',
             'otherKey' => 'attribute_id',
             'pivot' => ['product_id', 'attribute_id', 'language_id', 'text'],
-        ]
+        ],
+
+        'stores' => [
+            'Alexbeat\Electro\Models\Store',
+            'table' => 'oc_product_to_store',
+            'key' => 'product_id',
+            'otherKey' => 'store_id',
+            'pivot' => ['product_id', 'store_id',],
+        ],        
     ];
     
 

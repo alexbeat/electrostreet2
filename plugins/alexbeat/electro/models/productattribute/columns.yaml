@@ -1,0 +1,21 @@
+columns:
+  language_id:
+    label: Язык
+    searchable: true
+    sortable: true    
+  product:
+    label: Товар
+    relation: product
+    select: (select name from oc_product_description where product_id = oc_product_attribute.product_id limit 1)
+    searchable: true
+    sortable: true
+  attribute_id:
+    label: Атрибут
+    relation: attribute
+    select: (select name from oc_attribute_description where attribute_id = oc_product_attribute.attribute_id limit 1)
+    searchable: true
+    sortable: true
+  text:
+    label: Значение
+    searchable: true
+    sortable: true

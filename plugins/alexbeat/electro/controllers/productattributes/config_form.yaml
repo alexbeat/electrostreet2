@@ -1,0 +1,13 @@
+name: 'Атрибуты товаров'
+modelClass: Alexbeat\Electro\Models\ProductAttribute
+form: $/alexbeat/electro/models/productattribute/fields.yaml
+defaultRedirect: alexbeat/electro/productattributes
+create:
+    title: Создать
+    redirect: 'alexbeat/electro/productattributes/update/:id'
+    redirectClose: alexbeat/electro/productattributes
+update:
+    title: Изменить
+    redirect: alexbeat/electro/productattributes
+    redirectClose: alexbeat/electro/productattributes
+preview: {  }

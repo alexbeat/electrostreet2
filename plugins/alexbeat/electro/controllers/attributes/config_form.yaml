@@ -1,9 +1,9 @@
-name: Attributes
+name: Атрибуты
 form: $/alexbeat/electro/models/attribute/fields.yaml
 modelClass: Alexbeat\Electro\Models\Attribute
 defaultRedirect: alexbeat/electro/attributes
 create:
-    redirect: 'alexbeat/electro/attributes/update/:id'
+    redirect: 'alexbeat/electro/attributes/update/:attribute_id'
     redirectClose: alexbeat/electro/attributes
 update:
     redirect: alexbeat/electro/attributes

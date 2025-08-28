@@ -8,13 +8,17 @@ use Alexbeat\Electro\Models\Product;
 use Alexbeat\Electro\Models\Attribute as AttributeModel;
 use Alexbeat\Electro\Models\Manufacturer;
 use Alexbeat\Electro\Models\ProductAttribute;
-use Request;
+use Alexbeat\Electro\Classes\Pagination;
+use Alexbeat\Electro\Models\Category;
+use Alexbeat\Electro\Models\ProductDiscount;
+use Alexbeat\Electro\Models\ProductSpecial;
+use Alexbeat\Electro\Models\Store;
 
 class CatalogController extends Controller
 {
     public function list()
-    {
-        $products_query = Product::query()->with('description', 'atributy');
+    {   
+        define('DB_PREFIX','oc_');
 
         $category_id = input('category_id');
         if (!$category_id) {
@@ -22,10 +26,34 @@ class CatalogController extends Controller
             abort(404);
         }
 
-        // фильтр категории
-        $products_query = $products_query->inCategories([(int)$category_id]);
+        $store_id = input('store_id', 0);
+        $customer_group_id = input('customer_group_id', 9);
+
+        //get all children and itself of category
+        $category_ids = Category::where('parent_id', $category_id)->orWhere('category_id', $category_id)->pluck('category_id')->toArray();
+
+        $products_query = Product::with(['description', 'atributy'])
+            ->whereHas('product_to_store', function ($query) use ($store_id) {
+                $query->where('store_id', $store_id);
+            })
+            // ->inCategories([(int)$category_id])
+            ->whereHas('categories', function ($query) use ($category_ids) {
+                $query->whereIn('oc_product_to_category.category_id', $category_ids);
+            })
+        ;
+
+        // $products_query->addSelectRaw("
+        // (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . $customer_group_id . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, 
+        // (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . $customer_group_id . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special
+        // ");
 
 
+        // $products_query->dd();
+
+        //  общее кол-во товаров в категории
+        $total_products_count = $products_query->count();
+
+        // готовим контент фильтра
         $filter_content = $this->prepare_filter($products_query);
 
         // фильтр по наличию
@@ -80,10 +108,10 @@ class CatalogController extends Controller
                     $query->where('oc_product_attribute.attribute_id', $nn)
                         ->whereIn('text', $list_values);
                 });
-            }            
+            }
         }
 
-
+        $filtered_products_count = $products_query->count();
 
 
         // сортировка
@@ -94,7 +122,8 @@ class CatalogController extends Controller
                 'p.price' => 'price',
                 'p.hit' => 'hit',
                 'p.date_added' => 'date_added',
-                'p.rating' => 'rating'
+                'p.rating' => 'rating',
+                'p.sort_order' => 'sort_order',
             ];
 
             if (array_key_exists($sort, $sortMapping)) {
@@ -107,29 +136,99 @@ class CatalogController extends Controller
         }
 
 
-        // пагинация
-        $products_query = $products_query->paginate();
 
-        // print_r($products_query->get()->toArray());
+        // пагинация
+        $page = input('page', 1);
+        $per_page = $page == 1 ? 19 : 20;
+
+
+        $url = input('url');
+
+        //разобрать и добавить в url все параметры атрибутов, сортировки, страницы, цены
+        // Сбор параметров
+        $params = [];
+        // $params['page'] = $page;
+        if ($sort = input('sort')) {
+            $params['sort'] = $sort;
+            if ($order = input('order')) {
+                $params['order'] = $order;
+            }
+        }
+        if (input('price_from')) $params['price_from'] = input('price_from');
+        if (input('price_to')) $params['price_to'] = input('price_to');
+        if (input('in_stock')) $params['in_stock'] = input('in_stock');
+        if (input('manufacturers')) $params['manufacturers'] = input('manufacturers');
+
+        // Атрибуты
+        foreach (request()->all() as $key => $value) {
+            if (preg_match('/^attr\d+(_from|_to)?$/', $key)) {
+                $params[$key] = $value;
+            }
+        }
+
+        $url = input('url');
+        $finalUrl = $this->buildUrlWithParams($url, $params);
+
+        $products_query->addSelect([
+            '*',
+            'discount' => ProductDiscount::select('price')
+                ->whereColumn('oc_product_discount.product_id', 'oc_product.product_id')
+                ->where('customer_group_id', $customer_group_id)
+                ->where('quantity', '1')
+                ->whereRaw("((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW()))")
+                ->orderBy('priority', 'ASC')
+                ->orderBy('price', 'ASC')
+                ->limit(1)
+        ]);
+
+        $products_query->addSelect([
+            'special' => ProductSpecial::select('price')
+                ->whereColumn('oc_product_special.product_id', 'oc_product.product_id')
+                ->where('customer_group_id', $customer_group_id)
+                ->whereRaw("((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW()))")
+                ->orderBy('priority', 'ASC')
+                ->orderBy('price', 'ASC')
+                ->limit(1)
+        ]);        
+
+        $products_query = $products_query->paginate($per_page);
+
+
+
+
+
+        $pagination = new Pagination();
+        $pagination->total = $filtered_products_count;
+        $pagination->page = $page;
+        $pagination->limit = $per_page;
+        $pagination->shown = $per_page;
+        $pagination->url = $finalUrl;
 
         $list_content = $this->renderPartial('category', [
             'products' => $products_query,
             'category_id' => $category_id,
-            'page' => input('page', 1),
+            'page' => $page,
+            'url' => $url,
             'fias_telegram' => input('fias_telegram'),
             'fias_whatsapp' => input('fias_whatsapp'),
             'fias_phone_main' => input('fias_phone_main'),
             'fias_contact_mail' => input('fias_contact_mail'),
+            'store_id' => $store_id,
+            'customer_group_id' => $customer_group_id,
         ]);
 
-        $pagination_content = $this->renderPartial('category_pagination', [
-            'products' => $products_query,
-        ]);
+        // $pagination_content = $this->renderPartial('category_pagination', [
+        //     'products' => $products_query,
+        // ]);
+
+        $pagination_content = $pagination->render();
 
         return json_encode([
             'list' => $list_content,
             'filter' => $filter_content,
             'pagination' => $pagination_content,
+            'total_products_count' => $total_products_count,
+            'filtered_products_count' => $filtered_products_count,
         ]);
     }
 
@@ -282,5 +381,37 @@ class CatalogController extends Controller
         ]);
 
         return $filter_content;
+    }
+
+
+    protected function buildUrlWithParams($baseUrl, $params)
+    {
+        $baseUrl = html_entity_decode(urldecode($baseUrl));
+        // trace_log($baseUrl);
+
+        $parsedUrl = parse_url($baseUrl);
+
+        // Существующие параметры
+        $query = [];
+        if (isset($parsedUrl['query'])) {
+            parse_str($parsedUrl['query'], $query);
+        }
+
+        // Объединяем с новыми параметрами
+        $query = array_merge($query, $params);
+
+        // Собираем query string
+        $queryString = http_build_query($query);
+
+        // Собираем итоговый URL
+        $url = $parsedUrl['path'] ?? '';
+        if ($queryString) {
+        }
+        $url .= '?' . $queryString;
+        $url = html_entity_decode(urldecode($url));
+
+        // trace_log('result:' . $url);
+
+        return $url;
     }
 }

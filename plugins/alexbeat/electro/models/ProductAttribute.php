@@ -5,9 +5,9 @@ use Model;
 class ProductAttribute extends Model
 {
     public $table = 'oc_product_attribute';
-    public $primaryKey = null; // composite key
+    public $primaryKey = 'id';
     public $timestamps = false;
-    public $incrementing = false;
+    // public $incrementing = false;
 
     public $belongsTo = [
         'product' => [

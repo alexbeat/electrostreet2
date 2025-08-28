@@ -1,0 +1,18 @@
+scopes:
+  language_id:
+    label: Язык
+    type: number
+    conditions: language_id = :filtered
+    default: 1
+  product:
+    label: Товар
+    type: group
+    conditions: product_id = :filtered
+    modelClass: Alexbeat\Electro\Models\Product
+    nameFrom: model
+  attribute:
+    label: Атрибут
+    type: group
+    conditions: attribute_id = :filtered
+    modelClass: Alexbeat\Electro\Models\Attribute
+    nameFrom: name

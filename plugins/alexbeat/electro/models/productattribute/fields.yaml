@@ -1,0 +1,14 @@
+fields:
+    product_id:
+        label: Товар
+        span: full
+        type: text
+    attribute_id:
+        label: Атрибут
+        type: text
+    language_id:
+        label: Язык
+        type: text
+    text:
+        label: Значение
+        type: text

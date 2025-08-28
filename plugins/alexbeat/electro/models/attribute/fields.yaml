@@ -4,13 +4,13 @@ fields:
       disabled: true
   attribute_group_id:
       label: Группа
-      type: relation
-      nameFrom: descriptions[name]
+    #   type: relation
+    #   nameFrom: description[name]
       span: left
   name:
       label: Название
       type: text
-      relation: descriptions
+      relation: description
       select: name
       span: right
   sort_order:

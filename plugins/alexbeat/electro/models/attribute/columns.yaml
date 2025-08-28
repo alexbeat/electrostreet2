@@ -5,7 +5,7 @@ columns:
       sortable: true
   name:
       label: Название
-      relation: descriptions
+      relation: description
       select: name
       searchable: true
       sortable: true

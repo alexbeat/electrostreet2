@@ -1,5 +1,5 @@
 title = "Каталог"
-url = "/test2"
+url = "/test"
 
 [catalog]
 
@@ -16,11 +16,11 @@ use Alexbeat\Electro\Models\Product;
 //     $this['result'] = json_encode($result);
 //     // echo $this['result'];
 
-$product = Product::find(17576);
-print_r($product->toArray());
-print_r($product->attributes2()->get()->toArray());
+// $product = Product::find(17576);
+// print_r($product->toArray());
+// print_r($product->attributes2()->get()->toArray());
 // print_r($product->attribute_groups);
-
+echo file_get_contents('/var/www/electrostreet/data/www/electrostreet.ru/img/sbp.svg');
 
 }
 ==
