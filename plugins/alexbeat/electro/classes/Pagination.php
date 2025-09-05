@@ -35,6 +35,8 @@ class Pagination
 
     public function render()
     {
+        $output = '';
+        
         $this->url = str_replace('/&', '/?', $this->url);
 
         $total = $this->total;
@@ -46,7 +48,7 @@ class Pagination
         }
 
         if (!(int)$this->limit) {
-            $limit = 10;
+            $limit = 20;
         } else {
             $limit = $this->limit;
         }
@@ -54,8 +56,8 @@ class Pagination
         $num_pages = ceil($total / $limit);
 
         if ($this->model == 'category') {
-            $first_page_limit = $page == 1 ? $limit : $limit - 1; // Количество элементов на первой странице
-            $other_pages_limit = $page == 1 ? $limit + 1 : $limit; // Количество элементов на остальных страницах
+            $first_page_limit = $page == 1 ? $limit - 1 : $limit - 1; // Количество элементов на первой странице
+            $other_pages_limit = $page == 1 ? $limit : $limit; // Количество элементов на остальных страницах
 
             if ($total <= $first_page_limit) {
                 $num_pages = 1;
@@ -64,13 +66,11 @@ class Pagination
                 $num_pages = 1 + ceil($remaining_items / $other_pages_limit);
             }
         }
-        // echo $num_pages;
-
-
+        // $output.=$num_pages.' '.$total.' '.$limit.' '.$remaining_items.' '.$first_page_limit.' '.$other_pages_limit;
 
         $this->url = str_replace('%7Bpage%7D', '{page}', $this->url);
 
-        $output = '';
+
 
         // if ($this->shown >= $this->limit) {
         if ($this->page < $num_pages) {
@@ -106,11 +106,11 @@ class Pagination
                 if ($page == $i) {
                     $output .= '<a class="_active">' . $i . '</a>';
                 } else {
-                    if ($i != 1) {
+                    // if ($i != 1) {
                         $output .= '<a href="' . str_replace('{page}', $i, $this->url) . '">' . $i . '</a>';
-                    } else {
-                        $output .= '<a href="' . str_replace(['&page={page}', '?page={page}'], '', html_entity_decode($this->url)) . '">' . $i . '</a>';
-                    }
+                    // } else {
+                        // $output .= '<a href="' . str_replace(['&page={page}', '?page={page}'], '', html_entity_decode($this->url)) . '">' . $i . '</a>';
+                    // }
                 }
             }
 

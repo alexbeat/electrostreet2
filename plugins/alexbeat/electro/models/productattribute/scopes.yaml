@@ -16,3 +16,7 @@ scopes:
     conditions: attribute_id = :filtered
     modelClass: Alexbeat\Electro\Models\Attribute
     nameFrom: name
+  text:
+    label: Значение
+    type: text
+    modelScope: filterByText

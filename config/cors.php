@@ -2,7 +2,7 @@
 return [
     'paths' => ['api/*', 'backend/*', '*'],
     'allowed_methods' => ['*'],
-    'allowed_origins' => ['http://vseslav.name','https://electrostreet.ru'],
+    'allowed_origins' => ['http://vseslav.name','https://electrostreet.ru','https://*.electrostreet.ru'],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],

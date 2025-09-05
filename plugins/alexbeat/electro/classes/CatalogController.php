@@ -17,8 +17,8 @@ use Alexbeat\Electro\Models\Store;
 class CatalogController extends Controller
 {
     public function list()
-    {   
-        define('DB_PREFIX','oc_');
+    {
+        define('DB_PREFIX', 'oc_');
 
         $category_id = input('category_id');
         if (!$category_id) {
@@ -30,25 +30,17 @@ class CatalogController extends Controller
         $customer_group_id = input('customer_group_id', 9);
 
         //get all children and itself of category
-        $category_ids = Category::where('parent_id', $category_id)->orWhere('category_id', $category_id)->pluck('category_id')->toArray();
+        // $category_ids = Category::where('parent_id', $category_id)->orWhere('category_id', $category_id)->pluck('category_id')->toArray();
 
-        $products_query = Product::with(['description', 'atributy'])
+        $products_query = Product::active()->with(['description', 'atributy'])
             ->whereHas('product_to_store', function ($query) use ($store_id) {
                 $query->where('store_id', $store_id);
             })
-            // ->inCategories([(int)$category_id])
-            ->whereHas('categories', function ($query) use ($category_ids) {
-                $query->whereIn('oc_product_to_category.category_id', $category_ids);
-            })
+            ->inCategories([(int)$category_id])
+            // ->whereHas('categories', function ($query) use ($category_ids) {
+            //     $query->whereIn('oc_product_to_category.category_id', $category_ids);
+            // })
         ;
-
-        // $products_query->addSelectRaw("
-        // (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . $customer_group_id . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, 
-        // (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . $customer_group_id . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special
-        // ");
-
-
-        // $products_query->dd();
 
         //  общее кол-во товаров в категории
         $total_products_count = $products_query->count();
@@ -56,12 +48,12 @@ class CatalogController extends Controller
         // готовим контент фильтра
         $filter_content = $this->prepare_filter($products_query);
 
-        // фильтр по наличию
+        // // фильтр по наличию
         if (input('in_stock')) {
             $products_query->where('quantity', '>', 1);
         }
 
-        // фильтр по производителю
+        // // фильтр по производителю
         if (input('manufacturers')) {
             $manufacturers = explode(',', input('manufacturers'));
             $products_query->whereIn('manufacturer_id', $manufacturers);
@@ -103,6 +95,7 @@ class CatalogController extends Controller
                 if (!is_array(input("attr{$nn}"))) continue;
 
                 $list_values = (array)input("attr{$nn}");
+                // $list_values = explode(',', input("attr{$nn}"));
                 // print_r($list_values);
                 $products_query->whereHas('atributy', function ($query) use ($nn, $list_values) {
                     $query->where('oc_product_attribute.attribute_id', $nn)
@@ -115,31 +108,45 @@ class CatalogController extends Controller
 
 
         // сортировка
-        if ($sort = input('sort')) {
-            $order = input('order');
+        $sort = input('sort', 'p.sort_order');
+        $order = input('order');
 
-            $sortMapping = [
-                'p.price' => 'price',
-                'p.hit' => 'hit',
-                'p.date_added' => 'date_added',
-                'p.rating' => 'rating',
-                'p.sort_order' => 'sort_order',
-            ];
+        $order_raw = 'quantity > 0 DESC';
 
-            if (array_key_exists($sort, $sortMapping)) {
-                $sort = $sortMapping[$sort];
-            }
-
-            // Предполагается, что в $order могут быть только 'asc' или 'desc'
-            $method = $order === 'DESC' ? 'orderByDesc' : 'orderBy';
-            $products_query->$method($sort);
+        if ($sort == 'best_discount') {
+            $order_raw .= ', 
+            CASE 
+                WHEN special > 0 THEN (price - special)
+                WHEN special IS NULL AND discount > 0 THEN (price - discount)
+                ELSE 0
+            END DESC
+            ';
         }
 
+        $products_query->orderByRaw($order_raw);
 
+        $sortMapping = [
+            'p.price' => 'price',
+            'p.hit' => 'hit',
+            'p.date_added' => 'date_added',
+            'p.rating' => 'rating',
+            'p.sort_order' => 'sort_order',
+        ];
+
+        $sortField = '';
+        if (array_key_exists($sort, $sortMapping)) {
+            $sortField = $sortMapping[$sort];
+        }
+
+        if ($sortField) {
+            $method = $order === 'DESC' ? 'orderByDesc' : 'orderBy';
+            $products_query->$method($sortField);
+        }
 
         // пагинация
         $page = input('page', 1);
-        $per_page = $page == 1 ? 19 : 20;
+        $max_per_page = 20;
+        $per_page = $page == 1 ? $max_per_page - 1 : $max_per_page;
 
 
         $url = input('url');
@@ -189,19 +196,35 @@ class CatalogController extends Controller
                 ->orderBy('priority', 'ASC')
                 ->orderBy('price', 'ASC')
                 ->limit(1)
-        ]);        
+        ]);
+
+        // $products_query->addSelect(\DB::raw('
+        // CASE 
+        //     WHEN special > 0 THEN special
+        //     WHEN special IS NULL AND discount > 0 THEN discount
+        //     ELSE 0
+        // END AS calculated_price        
+        // '));
+
+        // trace_log($_SERVER['REMOTE_ADDR']);
+        if ($_SERVER['REMOTE_ADDR'] == '79.126.115.130') {
+            // trace_log('customer group: '.$customer_group_id);
+            // trace_log($products_query->toSql());
+        }
+
 
         $products_query = $products_query->paginate($per_page);
 
-
-
-
+        $products_query->each(function ($product) {
+            $product->special = $product->special ? $product->special : $product->discount;
+            $product->skidka = number_format($product->price - $product->special, 0, '', ' ') . ' ₽';
+        });
 
         $pagination = new Pagination();
         $pagination->total = $filtered_products_count;
         $pagination->page = $page;
-        $pagination->limit = $per_page;
-        $pagination->shown = $per_page;
+        $pagination->limit = $max_per_page;
+        $pagination->shown = min($per_page, count($products_query));
         $pagination->url = $finalUrl;
 
         $list_content = $this->renderPartial('category', [
@@ -236,6 +259,8 @@ class CatalogController extends Controller
 
     private function prepare_filter($products_query)
     {
+        $filter_params_count = 0;
+
         $productIds = $products_query->get()->pluck('product_id');
 
         $attributeIds = [
@@ -254,7 +279,7 @@ class CatalogController extends Controller
 
         $atributy = AttributeModel::whereIn('attribute_id', $attributeIds)->get();
 
-        $atributy->each(function ($atribut) use ($productIds, $slider_attributes, $checkboxes_attributes, $switch_attributes) {
+        $atributy->each(function ($atribut) use ($productIds, $slider_attributes, $checkboxes_attributes, $switch_attributes, &$filter_params_count) {
             $pa_query = ProductAttribute::query()
                 ->where('attribute_id', $atribut->attribute_id)
                 ->whereIn('product_id', $productIds);
@@ -263,10 +288,26 @@ class CatalogController extends Controller
                 $atribut->type = 'slide';
 
                 // Преобразовываем текстовые данные в числа для поиска min и max
-                $atribut->min = $pa_query->selectRaw('MIN(CAST(text AS DECIMAL)) as min_value')->value('min_value');
-                $atribut->max = $pa_query->selectRaw('MAX(CAST(text AS DECIMAL)) as max_value')->value('max_value');
+                // Игнорируем пустые значения при вычислении минимального значения
+                $atribut->min = $pa_query
+                    ->where('text', '!=', '')
+                    ->selectRaw('MIN(CAST(text AS DECIMAL)) as min_value')
+                    ->value('min_value');
+
+                // Игнорируем пустые значения при вычислении максимального значения
+                $atribut->max = $pa_query
+                    ->where('text', '!=', '')
+                    ->selectRaw('MAX(CAST(text AS DECIMAL)) as max_value')
+                    ->value('max_value');
+
                 $atribut->from = input('attr' . $atribut->attribute_id . '_from', $atribut->min);
                 $atribut->to = input('attr' . $atribut->attribute_id . '_to', $atribut->max);
+                if ($atribut->from != $atribut->min) {
+                    $filter_params_count++;
+                }
+                if ($atribut->to != $atribut->max) {
+                    $filter_params_count++;
+                }
             }
 
             if (in_array($atribut->attribute_id, $checkboxes_attributes)) {
@@ -277,10 +318,17 @@ class CatalogController extends Controller
                 $atribut->selected_count = $uniqueTextsQuery->count();
                 // echo $atribut->selected_count;
 
+                //сортируем по убыванию в зависимости от атрибута
+                if (in_array($atribut->attribute_id, [14])) {
+                    $uniqueTextsQuery->orderByRaw('CAST(text AS DECIMAL) DESC');
+                    trace_log($uniqueTextsQuery->toSql());
+                }
+
                 // Получение уникальных значений
                 $atribut->values = $uniqueTextsQuery->take(20)->get(); //берем макс. 20
 
                 $search_values = (array)input('attr' . $atribut->attribute_id);
+                // $search_values = (array)explode(',', input('attr' . $atribut->attribute_id));
                 // print_r($search_values);
 
                 $selected_count = 0;
@@ -293,6 +341,7 @@ class CatalogController extends Controller
                     }
                 });
                 $atribut->selected_count = $selected_count;
+                if ($selected_count) $filter_params_count++;
 
                 // print_r($atribut->values->toArray());
             }
@@ -305,7 +354,6 @@ class CatalogController extends Controller
         $manufacturerIds = $products_query->distinct()->pluck('manufacturer_id');
         $manufacturers = Manufacturer::whereIn('manufacturer_id', $manufacturerIds)->orderBy('name')->get();
         $search_manufacturers = explode(',', input('manufacturers'));
-
         $manufacturers_checked_count = 0;
         $manufacturers->each(function ($manufacturer) use ($search_manufacturers, &$manufacturers_checked_count) {
             if (in_array($manufacturer->manufacturer_id, $search_manufacturers)) {
@@ -313,6 +361,7 @@ class CatalogController extends Controller
                 $manufacturers_checked_count++;
             }
         });
+        if ($manufacturers_checked_count) $filter_params_count++;
 
         $price_min = (int)$products_query->min('price');
         $price_max = (int)$products_query->max('price');
@@ -320,14 +369,20 @@ class CatalogController extends Controller
 
 
         $data = [];
-        $data['sort'] = input('sort', 'p.hit');
-        $data['order'] = input('order', 'desc');
+        $data['sort'] = input('sort');
+        $data['order'] = input('order');
+        if ($data['sort'] || $data['order']) $filter_params_count++;
 
         // Массив с опциями сортировки
         $data['sort_options'] = [
             [
                 'title' => 'По рейтингу',
                 'sort'  => 'p.rating',
+                'order' => 'DESC'
+            ],
+            [
+                'title' => 'Сначала со скидкой',
+                'sort'  => 'best_discount',
                 'order' => 'DESC'
             ],
             [
@@ -374,6 +429,7 @@ class CatalogController extends Controller
             'price_to' => input('price_to'),
             'price_min' => $price_min,
             'price_max' => $price_max,
+            'filters_count' => $filter_params_count,
         ];
 
         $filter_content = $this->renderPartial('category_filter', [
@@ -386,7 +442,7 @@ class CatalogController extends Controller
 
     protected function buildUrlWithParams($baseUrl, $params)
     {
-        $baseUrl = html_entity_decode(urldecode($baseUrl));
+        // $baseUrl = html_entity_decode(urldecode($baseUrl));
         // trace_log($baseUrl);
 
         $parsedUrl = parse_url($baseUrl);

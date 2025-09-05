@@ -9,7 +9,7 @@
                 {% endif %}
 
                 <div class="product__info">
-                    {% if product.special %}
+                    {% if product.special and product.special < product.price %}
                     <div class="label _red">- {{ product.skidka }}</div>
                     {% endif %}
 
@@ -104,10 +104,10 @@
         </div><a href="{{ product.href }}"><b>{{ product.name }}</b></a>
         <div class="product__price">
             <div class="price">
-                {% if product.special %}
-                <s>{{ product.price|formatPrice }}</s><span>{{ product.special|formatPrice }}</span>
+                {% if product.special and product.special < product.price %}
+                    <s>{{ product.price|formatPrice }}</s><span>{{ product.special|formatPrice }}</span>
                 {% else %}
-                <span>{{ product.price|formatPrice }}</span>
+                    <span>{{ product.price|formatPrice }}</span>
                 {% endif %}
             </div>
             <div class="product__btns">

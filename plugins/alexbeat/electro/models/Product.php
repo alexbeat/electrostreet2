@@ -70,7 +70,7 @@ class Product extends Model
 
     public function getThumbAttribute()
     {
-        return ResizeImages::resize(\Storage::disk('media')->url($this->image), 200, 200, ['mode' => 'crop']);
+        return ResizeImages::resize(\Storage::disk('media')->url($this->image), 200, 200, ['mode' => 'fit']);
     }
 
     public function getNameAttribute()
@@ -131,5 +131,9 @@ class Product extends Model
         return $query->whereHas('categories', function ($q) use ($allCategoryIds) {
             $q->whereIn('oc_product_to_category.category_id', $allCategoryIds);
         });
+    }
+
+    public function scopeActive($query) {
+        return $query->where('status', 1);
     }
 }

@@ -1,6 +1,3 @@
-
-
-<input class="filter-alt__toggle" id="filter-alt-toggle" type="checkbox">
 <div class="filter-alt__main">
     <div class="filter-alt__header">
         <div class="h2">Фильтр</div>
@@ -27,6 +24,7 @@
                 </div>
                 <input class="input-range" type="text" data-min="{{ filter.price_min }}" data-max="{{ filter.price_max }}" data-from="{{ filter.price_from }}" data-to="{{ filter.price_to }}" data-step="100">
             </div>
+            <div class="filter-alt__apply"><a class="btn _fill" href="">Показать</a></div>
         </div>
     </div>
     
@@ -48,6 +46,7 @@
                     <span class="checkbox__label">{{ manufacturer.name }}</span>
                 </label>
             {% endfor %}
+            <div class="filter-alt__apply"><a class="btn _fill" href="">Показать</a></div>
         </div>
     </div>
 
@@ -73,6 +72,7 @@
                             </div>
                             <input class="input-range" type="text" data-min="{{ attribute.min }}" data-max="{{ attribute.max }}" data-from="{{ attribute.from }}" data-to="{{ attribute.to }}" data-step="1">
                         </div>
+                        <div class="filter-alt__apply"><a class="btn _fill" href="">Показать</a></div>
                     </div>
                 </div>
             {% endif %}
@@ -96,6 +96,7 @@
                         <span class="checkbox__label">{{ value.text }}</span>
                     </label>
                     {% endfor %}
+                    <div class="filter-alt__apply"><a class="btn _fill" href="">Показать</a></div>
                 </div>
             </div>
         {% endif %}
@@ -122,26 +123,32 @@
         #}
     {% endfor %}
     
-    <a class="filter-alt__clear-all link-line" href="">Очистить все</a>
+    {% if filter.filters_count %}
+        <a class="filter-alt__clear-all link-line" href="#">Очистить все</a>
+    {% endif %}
 
     {#
-    <a class="filter-alt__more link-line" href=""></a>
+    <a class="filter-alt__more link-line" href="#"></a>
     #}
 
-    {#
+    
     <div class="filter-alt__submit">
-        <a class="btn _mini _full" href=""><span>Показать</span><small>(460)</small></a>
+        <a class="btn _mini _full _fill" href="#"><span>Показать</span>
+        {#        <small>(460)</small>        #}
+        </a>
     </div>
-    #}
+    
 
 </div>
 <label class="filter-alt__btn" for="filter-alt-toggle"><i class="icon icon-filter"></i></label>
 
 <div class="filter-alt__sort">
+    {#
     <label class="checkbox _alt">
         <input name="in_stock" class="checkbox__input" type="checkbox" {{ filter.in_stock ? 'checked' : '' }}><span
             class="checkbox__mask"></span><span class="checkbox__label">В наличии</span>
     </label>
+    #}
 
     <div class="select _alt">
         <div class="select__main"><i class="icon icon-sort"></i>

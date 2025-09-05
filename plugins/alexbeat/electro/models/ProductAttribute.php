@@ -19,4 +19,9 @@ class ProductAttribute extends Model
             'key' => 'attribute_id'
         ]
     ];
+
+    public function scopeFilterByText($query, $scope)
+    {
+        return $query->where('text', $scope->value);
+    }    
 }
