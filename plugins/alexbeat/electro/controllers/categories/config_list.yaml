@@ -1,12 +1,18 @@
-list: $/alexbeat/electro/models/category/columns.yaml
+title: Категории
 modelClass: Alexbeat\Electro\Models\Category
-title: Categories
+list: $/alexbeat/electro/models/category/columns.yaml
+recordUrl: 'alexbeat/electro/categories/update/:category_id'
 noRecordsMessage: 'backend::lang.list.no_records'
+recordsPerPage: 20
 showSetup: true
 showCheckboxes: true
-recordsPerPage: 20
+structure:
+    showTree: true
+    treeExpanded: false
+defaultSort:
+    column: sort_order
+    direction: asc
 toolbar:
     buttons: list_toolbar
     search:
         prompt: 'backend::lang.list.search_prompt'
-recordUrl: 'alexbeat/electro/categories/update/:category_id'

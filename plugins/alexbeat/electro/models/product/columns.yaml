@@ -20,7 +20,7 @@ columns:
         relation: description
         select: name
         sortable: true
-
+        searchable: true
     model:
         label: Модель
         searchable: true

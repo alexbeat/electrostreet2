@@ -1,0 +1,23 @@
+columns:
+  image:
+    label: Изображение в меню
+    type: image
+    width: 50
+    height: 50
+    options:
+      mode: crop
+      quality: 90
+  category:
+    label: Категория
+    relation: category
+    select: id
+    sortable: true
+    searchable: true
+  link:
+    label: Ссылка
+    sortable: true
+    searchable: true
+  sort_order:
+    label: Порядок
+    type: number
+    span: auto

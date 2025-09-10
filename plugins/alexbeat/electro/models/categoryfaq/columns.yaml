@@ -1,0 +1,19 @@
+columns:
+  category:
+    label: Категория
+    relation: category
+    select: id
+    sortable: true
+    searchable: true
+  question:
+    label: Вопрос
+    sortable: true
+    searchable: true
+  answer:
+    label: Вопрос
+    sortable: true
+    searchable: true
+  sort_order:
+    label: Порядок
+    type: number
+    span: auto

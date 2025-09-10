@@ -16,6 +16,14 @@ use Alexbeat\Electro\Models\Store;
 
 class CatalogController extends Controller
 {
+    public const CHECKBOX_TYPE = 0;
+    public const RANGE_TYPE = 1;
+    public const SWITCH_TYPE = 2;
+    public const SORT_TEXT_ASC = 0;
+    public const SORT_TEXT_DESC = 1;
+    public const SORT_NUMERIC_ASC = 2;
+    public const SORT_NUMERIC_DESC = 3;
+
     public function list()
     {
         define('DB_PREFIX', 'oc_');
@@ -25,6 +33,8 @@ class CatalogController extends Controller
             //return 404
             abort(404);
         }
+
+        $category = Category::findOrFail($category_id);
 
         $store_id = input('store_id', 0);
         $customer_group_id = input('customer_group_id', 9);
@@ -46,7 +56,7 @@ class CatalogController extends Controller
         $total_products_count = $products_query->count();
 
         // готовим контент фильтра
-        $filter_content = $this->prepare_filter($products_query);
+        $filter_content = $this->prepare_filter($category, $products_query);
 
         // // фильтр по наличию
         if (input('in_stock')) {
@@ -69,7 +79,7 @@ class CatalogController extends Controller
         }
 
         // проход по input-параметрам для фильтрации по атрибутам
-        foreach (request()->all() as $key => $value) {
+        foreach (\Input::all() as $key => $value) {
             if (preg_match('/attr(\d+)_from/', $key, $matches)) {
                 $nn = $matches[1];
                 // if ($nn != 12) continue;
@@ -141,7 +151,13 @@ class CatalogController extends Controller
         if ($sortField) {
             $method = $order === 'DESC' ? 'orderByDesc' : 'orderBy';
             $products_query->$method($sortField);
+        } else {
+            // $products_query->orderBy('sort_order');
+            $products_query->orderByDesc('product_id');       
+            // trace_log($products_query->toSql());     
         }
+
+        
 
         // пагинация
         $page = input('page', 1);
@@ -167,7 +183,7 @@ class CatalogController extends Controller
         if (input('manufacturers')) $params['manufacturers'] = input('manufacturers');
 
         // Атрибуты
-        foreach (request()->all() as $key => $value) {
+        foreach (\Input::all() as $key => $value) {
             if (preg_match('/^attr\d+(_from|_to)?$/', $key)) {
                 $params[$key] = $value;
             }
@@ -198,25 +214,14 @@ class CatalogController extends Controller
                 ->limit(1)
         ]);
 
-        // $products_query->addSelect(\DB::raw('
-        // CASE 
-        //     WHEN special > 0 THEN special
-        //     WHEN special IS NULL AND discount > 0 THEN discount
-        //     ELSE 0
-        // END AS calculated_price        
-        // '));
-
-        // trace_log($_SERVER['REMOTE_ADDR']);
-        if ($_SERVER['REMOTE_ADDR'] == '79.126.115.130') {
-            // trace_log('customer group: '.$customer_group_id);
-            // trace_log($products_query->toSql());
-        }
-
 
         $products_query = $products_query->paginate($per_page);
 
         $products_query->each(function ($product) {
             $product->special = $product->special ? $product->special : $product->discount;
+            if ($product->special > $product->price) {
+                $product->price = $product->special;
+            }
             $product->skidka = number_format($product->price - $product->special, 0, '', ' ') . ' ₽';
         });
 
@@ -257,34 +262,38 @@ class CatalogController extends Controller
 
 
 
-    private function prepare_filter($products_query)
+    private function prepare_filter($category, $products_query)
     {
         $filter_params_count = 0;
 
         $productIds = $products_query->get()->pluck('product_id');
 
-        $attributeIds = [
-            12, 13, 14, 15, 28, 221, 933,
-        ];
+        // $attributeIds = [
+        //     12, 13, 14, 15, 28, 221, 933,
+        // ];
+
+        // $attributeIds = $category->getFilterAttributes();
 
         $slider_attributes = [
-            12, 13, 15, 221, 933,
+            // 12, 13, 15, 221, 933,
         ];
 
         $checkboxes_attributes = [
-            28, 14,
+            // 28, 14,
         ];
 
         $switch_attributes = [];
 
-        $atributy = AttributeModel::whereIn('attribute_id', $attributeIds)->get();
+        $atributy = $category->getFilterAttributes();//AttributeModel::whereIn('attribute_id', $attributeIds)->get();
 
         $atributy->each(function ($atribut) use ($productIds, $slider_attributes, $checkboxes_attributes, $switch_attributes, &$filter_params_count) {
             $pa_query = ProductAttribute::query()
                 ->where('attribute_id', $atribut->attribute_id)
                 ->whereIn('product_id', $productIds);
 
-            if (in_array($atribut->attribute_id, $slider_attributes)) {
+            // trace_log($atribut->name.' '.$atribut->attribute_id.' '.$atribut->filter_type_id);
+
+            if ($atribut->filter_type_id == static::RANGE_TYPE) {
                 $atribut->type = 'slide';
 
                 // Преобразовываем текстовые данные в числа для поиска min и max
@@ -310,22 +319,30 @@ class CatalogController extends Controller
                 }
             }
 
-            if (in_array($atribut->attribute_id, $checkboxes_attributes)) {
+            if ($atribut->filter_type_id == static::CHECKBOX_TYPE) {
                 $atribut->type = 'checkboxes';
 
                 // Правильное использование distinct и select
-                $uniqueTextsQuery = $pa_query->select('text')->distinct();
+                $uniqueTextsQuery = $pa_query->select('text')->distinct()->where('text','!=','');
                 $atribut->selected_count = $uniqueTextsQuery->count();
                 // echo $atribut->selected_count;
 
-                //сортируем по убыванию в зависимости от атрибута
-                if (in_array($atribut->attribute_id, [14])) {
-                    $uniqueTextsQuery->orderByRaw('CAST(text AS DECIMAL) DESC');
-                    trace_log($uniqueTextsQuery->toSql());
+                switch ($atribut->sort_type_id) {
+                    case static::SORT_TEXT_DESC:
+                        $uniqueTextsQuery->orderBy('text', 'desc');
+                        break;
+                    case static::SORT_NUMERIC_ASC:
+                        $uniqueTextsQuery->orderByRaw('CAST(text AS DECIMAL)');
+                        break;
+                    case static::SORT_NUMERIC_DESC:
+                        $uniqueTextsQuery->orderByRaw('CAST(text AS DECIMAL) DESC');
+                    default:
+                        $uniqueTextsQuery->orderBy('text', 'asc');
                 }
 
+
                 // Получение уникальных значений
-                $atribut->values = $uniqueTextsQuery->take(20)->get(); //берем макс. 20
+                $atribut->values = $uniqueTextsQuery->take(30)->get(); //берем макс. 30
 
                 $search_values = (array)input('attr' . $atribut->attribute_id);
                 // $search_values = (array)explode(',', input('attr' . $atribut->attribute_id));
@@ -346,7 +363,7 @@ class CatalogController extends Controller
                 // print_r($atribut->values->toArray());
             }
 
-            if (in_array($atribut->attribute_id, $switch_attributes)) $atribut->type = 'switch';
+            if ($atribut->filter_type_id == static::SWITCH_TYPE) $atribut->type = 'switch';
         });
 
 

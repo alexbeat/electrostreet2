@@ -1,0 +1,18 @@
+fields:
+  question:
+    label: Вопрос
+    type: text
+    span: full
+  answer:
+    label: Ответ
+    type: textarea
+    span: full
+  category:
+    label: Категория
+    type: relation
+    relation: category
+    span: auto    
+  sort_order:
+    label: Порядок
+    type: number
+    span: auto

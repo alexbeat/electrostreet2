@@ -19,4 +19,7 @@ scopes:
   text:
     label: Значение
     type: text
-    modelScope: filterByText
+    # modelScope: filterByText
+    conditions:
+      equals: text = :value
+      contains: text like %:value%    

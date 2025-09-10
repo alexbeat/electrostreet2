@@ -1,21 +1,50 @@
-<?php namespace Alexbeat\Electro\Models;
+<?php
+
+namespace Alexbeat\Electro\Models;
 
 use Model;
 
 class Category extends Model
 {
+    use \October\Rain\Database\Traits\SimpleTree;
+    use \October\Rain\Database\Traits\Sortable;
+
     public $table = 'oc_category';
     public $primaryKey = 'category_id';
     public $incrementing = true;
     public $timestamps = false;
 
     // Связи
-    public $hasMany = [
-        'descriptions' => [
+    public $hasOne = [
+        'category_description' => [
             'Alexbeat\Electro\Models\CategoryDescription',
+            'key' => 'category_id',
+            'otherKey' => 'category_id',
+            'conditions' => 'language_id = 1'
+        ],
+    ];
+
+    public $hasMany = [
+        'brands' => [
+            'Alexbeat\Electro\Models\CategoryBrand',
             'key' => 'category_id',
             'otherKey' => 'category_id'
         ],
+        'faq' => [
+            'Alexbeat\Electro\Models\CategoryFaq',
+            'key' => 'category_id',
+            'otherKey' => 'category_id'
+        ],       
+        'links' => [
+            'Alexbeat\Electro\Models\CategoryLink',
+            'key' => 'category_id',
+            'otherKey' => 'category_id'
+        ],               
+        // 'descriptions' => [
+        //     'Alexbeat\Electro\Models\CategoryDescription',
+        //     'key' => 'category_id',
+        //     'otherKey' => 'category_id',
+        // ],
         'stores' => [
             'Alexbeat\Electro\Models\CategoryToStore',
             'key' => 'category_id',
@@ -24,8 +53,8 @@ class Category extends Model
         'paths' => [
             'Alexbeat\Electro\Models\CategoryPath',
             'key' => 'category_id',
-        ],
             'otherKey' => 'category_id'
+        ],
     ];
 
     public $belongsToMany = [
@@ -35,7 +64,16 @@ class Category extends Model
             'key' => 'category_id',
             'otherKey' => 'product_id',
             'pivot' => ['product_id', 'category_id', 'main_category'],
-        ]
+        ],
+        'filter_attributes' => [
+            'Alexbeat\Electro\Models\Attribute',
+            'table' => 'oc_category_filter_attributes',
+            'key' => 'category_id',
+            'otherKey' => 'attribute_id',     
+            'pivot' => [
+                'sort_order'
+            ],            
+        ],          
     ];
 
     // Функция для получения всех подкатегорий рекурсивно
@@ -59,6 +97,122 @@ class Category extends Model
     protected function getSubCategoryIds($categoryId)
     {
         return $this->where('parent_id', $categoryId)->pluck('category_id')->toArray();
+    }
+
+    private function getAttr($name)
+    {
+        return $this->category_description ? $this->category_description->$name : null;
+    }
+
+    private function setAttr($name, $value)
+    {
+        $this->category_description->$name = $value;
+        $this->category_description->save();
+    }
+
+    //category_description getters
+
+    public function getNameAttribute()
+    {
+        return $this->getAttr('name');
+    }
+
+    public function getDescriptionAttribute()
+    {
+        return $this->getAttr('description');
+    }
+
+    public function getMetaTitleAttribute()
+    {
+        return $this->getAttr('meta_title');
+    }
+
+    public function getMetaDescriptionAttribute()
+    {
+        return $this->getAttr('meta_description');
+    }
+
+    public function getMetaKeywordAttribute()
+    {
+        return $this->getAttr('meta_keyword');
+    }
+
+    public function getMetaH1Attribute()
+    {
+        return $this->getAttr('meta_h1');
+    }
+
+    public function getExtraH1Attribute()
+    {
+        return $this->getAttr('extra_h1');
+    }
+
+
+    //category_description setters
+
+    public function setNameAttribute($value)
+    {
+        $this->setAttr('name', $value);
+    }
+
+    public function setDescriptionAttribute($value)
+    {
+        $this->setAttr('description', $value);
+    }
+
+    public function setMetaTitleAttribute($value)
+    {
+        $this->setAttr('meta_title', $value);
+    }
+
+    public function setMetaDescriptionAttribute($value)
+    {
+        $this->setAttr('meta_description', $value);
+    }
+
+    public function setMetaKeywordAttribute($value)
+    {
+        $this->setAttr('meta_keyword', $value);
+    }
+
+    public function setMetaH1Attribute($value)
+    {
+        $this->setAttr('meta_h1', $value);
+    }
+
+    public function setExtraH1Attribute($value)
+    {
+        $this->setAttr('extra_h1', $value);
+    }
+
+
+
+    public function getFilterAttributes()
+    {
+        // Получаем attribute_id всех записей в отношениях filter_attributes для текущей категории
+        $attributes = $this->filter_attributes()
+            ->orderBy('oc_category_filter_attributes.sort_order')
+            ->get();        
+
+        // Если атрибуты найдены, возвращаем их
+        if (count($attributes)) {
+            return $attributes;
+        }
+
+        // Если не найдены, проверяем родительскую категорию
+        $parent = $this->parent;
+        while ($parent) {
+            $attributes = $parent->filter_attributes()
+                ->orderBy('oc_category_filter_attributes.sort_order')
+                ->get();   
+            if (!empty($attributes)) {
+                return $attributes;
+            }
+            $parent = $parent->parent;
+        }
+
+        // Если у родительских категорий тоже нет атрибутов
+        return Attribute::whereIn('attribute_id', [0])->get();//12, 13, 14, 15, 28, 221, 933,
     }
 
 

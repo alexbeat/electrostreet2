@@ -2,12 +2,12 @@
 
 use Model;
 
-class CategoryDescription extends Model
+class CategoryLink extends Model
 {
-    public $table = 'oc_category_description';
-    public $primaryKey = 'category_id';
+    public $table = 'oc_category_links';
+    public $primaryKey = 'id';
     public $timestamps = false;
-    public $incrementing = false;
+    public $incrementing = true;
 
     public $belongsTo = [
         'category' => [

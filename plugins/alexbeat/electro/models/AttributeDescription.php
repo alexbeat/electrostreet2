@@ -5,7 +5,7 @@ use Model;
 class AttributeDescription extends Model
 {
     public $table = 'oc_attribute_description';
-    public $primaryKey = null;
+    public $primaryKey = 'attribute_id';
     public $timestamps = false;
     public $incrementing = false;
 

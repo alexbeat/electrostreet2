@@ -2,12 +2,12 @@
 
 use Model;
 
-class CategoryDescription extends Model
+class CategoryBrand extends Model
 {
-    public $table = 'oc_category_description';
-    public $primaryKey = 'category_id';
+    public $table = 'oc_category_brands';
+    public $primaryKey = 'id';
     public $timestamps = false;
-    public $incrementing = false;
+    public $incrementing = true;
 
     public $belongsTo = [
         'category' => [

@@ -1,34 +1,33 @@
 columns:
+    image:
+        label: Изображение в меню
+        type: image
+        width: 50
+        height: 50
+        options:
+            mode: crop
+            quality: 90                   
+    name:
+        label: Название
+        relation: category_description
+        select: name
+        searchable: true
+        sortable: true
     category_id:
         label: ID
         searchable: true
+        sortable: true
     status:
         label: Активна
-        type: switch        
-    menu_image:
-        label: Изображение в меню
-        type: image
-        width: 100
-        height: 100
-        options:
-            mode: crop
-            quality: 90         
-    name:
-        label: Название
-        relation: descriptions
-        select: name
-        # conditions: "language_id = 1" # 1 — id русского языка в oc_category_description
-        searchable: true
-        sortable: true
-    parent_id:
-        label: Родитель
-    top:
-        label: Top
+        type: switch
+        sortable: true      
     sort_order:
         label: Сортировка
-
+        sortable: true
     date_added:
         label: Дата добавления
+        sortable: true
     date_modified:
         label: Дата изменения
-    # Пример вывода связанных данных (название категории на русском)
+        sortable: true
+

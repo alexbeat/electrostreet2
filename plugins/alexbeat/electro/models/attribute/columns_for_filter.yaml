@@ -16,7 +16,7 @@ columns:
         0: Чекбоксы
         1: Диапазон
         2: Да/Нет
-      sortable: true   
+      sortable: true  
   sort_type_id:
       label: Тип сортировки
       type: selectable
@@ -25,10 +25,6 @@ columns:
         1: Текст Я-А
         2: Число по возрастанию
         3: Число по убыванию
-      sortable: true                
-  attribute_group_id:
-      label: Группа
-      relation: attribute_group
-      select: (select name from oc_attribute_group_description where attribute_group_id = oc_attribute.attribute_group_id limit 1)
-  sort_order:
+      sortable: true             
+  pivot[sort_order]:
       label: Сортировка

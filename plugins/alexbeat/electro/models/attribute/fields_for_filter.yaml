@@ -1,7 +1,9 @@
 fields:
   name:
     label: Название
-    type: text
+    # type: relation
+    relation: attribute_description
+    select: name
     span: auto
   filter_type_id:
     label: Тип фильтра
@@ -19,14 +21,7 @@ fields:
       1: Текст Я-А
       2: Число по возрастанию
       3: Число по убыванию
-    span: auto    
-  attribute_group:
-    label: Группа
-    type: relation
-    relation: attribute_group
-    select: (select oc_attribute_group_description.name from oc_attribute_group_description where oc_attribute_group_description.attribute_group_id = oc_attribute_group.attribute_group_id limit 1)
     span: auto
-  sort_order:
+  pivot[sort_order]:
     label: Сортировка
     type: number
-    span: auto

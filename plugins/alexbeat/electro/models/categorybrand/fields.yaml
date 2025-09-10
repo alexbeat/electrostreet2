@@ -1,0 +1,19 @@
+fields:
+  category:
+    label: Категория
+    type: relation
+    relation: category
+    span: auto
+  link:
+    label: Ссылка
+    type: text
+    span: auto
+  image:
+    label: Изображение
+    type: mediafinder
+    mode: image
+    span: auto
+  sort_order:
+    label: Порядок
+    type: number
+    span: auto

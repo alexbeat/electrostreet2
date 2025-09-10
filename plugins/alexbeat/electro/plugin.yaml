@@ -28,6 +28,6 @@ navigation:
                 url: alexbeat/electro/attributes
                 icon: icon-sitemap                
             electro-productattributes:
-                label: Атрибуты товаров
+                label: Значения атрибутов товаров
                 url: alexbeat/electro/productattributes
                 icon: icon-sitemap                   

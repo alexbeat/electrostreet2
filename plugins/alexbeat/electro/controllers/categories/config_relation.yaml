@@ -1,0 +1,74 @@
+brands:
+  label: Бренд
+  recordsPerPage: 10
+  view:
+    list: $/alexbeat/electro/models/categorybrand/columns.yaml
+    recordsPerPage: 10
+    toolbarButtons: create|delete
+    # showSearch: true
+    # showSorting: true
+    # showSetup: true
+    # filter: $/alexbeat/electro/models/category_brand/scopes.yaml
+  manage:
+    form: $/alexbeat/electro/models/categorybrand/fields.yaml
+    list: $/alexbeat/electro/models/categorybrand/columns.yaml
+    recordsPerPage: 10
+    # showSearch: true
+    # showSorting: true
+    # showSetup: true
+    # filter: $/alexbeat/electro/models/category_brand/scopes.yaml
+
+faq:
+  label: Вопрос-ответ
+  recordsPerPage: 10
+  view:
+    list: $/alexbeat/electro/models/categoryfaq/columns.yaml
+    recordsPerPage: 10
+    toolbarButtons: create|delete
+  manage:
+    form: $/alexbeat/electro/models/categoryfaq/fields.yaml
+    list: $/alexbeat/electro/models/categoryfaq/columns.yaml
+    recordsPerPage: 10
+
+filter_attributes:
+  label: Атрибут
+  recordsPerPage: 20
+  view:
+    list: $/alexbeat/electro/models/attribute/columns_for_filter.yaml
+    recordsPerPage: 20
+    toolbarButtons: add|remove
+    showTree: false
+    showSearch: true
+    showSorting: true
+    showSetup: true
+    # defaultSort:
+    #   columm: attribute_id
+    #   direction: asc         
+  manage:
+    form: $/alexbeat/electro/models/attribute/fields_for_filter.yaml
+    list: $/alexbeat/electro/models/attribute/columns.yaml
+    recordsPerPage: 20
+    showTree: false
+    showSearch: true
+    showSorting: true
+    showSetup: true
+    # defaultSort:
+    #   columm: attribute_id
+    #   direction: asc        
+  pivot:
+    form:
+      fields:
+        pivot[sort_order]:
+          label: Порядок
+
+links:
+  label: Ссылки
+  recordsPerPage: 20
+  view:
+    list: $/alexbeat/electro/models/categorylink/columns.yaml
+    recordsPerPage: 20
+    toolbarButtons: create|delete
+  manage:
+    form: $/alexbeat/electro/models/categorylink/fields.yaml
+    list: $/alexbeat/electro/models/categorylink/columns.yaml
+    recordsPerPage: 20

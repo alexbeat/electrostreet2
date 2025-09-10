@@ -1,47 +1,210 @@
 fields:
-    category_id:
-        label: ID
-        disabled: true
-    parent_id:
-        label: Родитель
-    top:
-        label: Top
-        type: switch
-    sort_order:
-        label: Сортировка
+  name:
+    label: "Название"
+    type: text
+    span: auto
+    # tab: Основное
+
+tabs:
+  fields:
+
+
+    description:
+      label: "Описание"
+      type: richeditor
+      tab: Основное
+
+    parent:
+      label: "Родительская категория"
+      type: relation
+      relation: categories
+      span: auto
+      tab: Основное
+
     status:
-        label: Статус
-        type: switch
-    date_added:
-        label: Дата добавления
-        disabled: true
-    date_modified:
-        label: Дата изменения
-        disabled: true
-    # Связанные описания
-    # descriptions:
-    #     label: Описания
-    #     type: repeater
-    #     form:
-    #         fields:
-    #             language_id:
-    #                 label: Язык
-    #             name:
-    #                 label: Название
-    #             description:
-    #                 label: Описание
-    #                 type: textarea
-    #             meta_title:
-    #                 label: Meta Title
-    #             meta_description:
-    #                 label: Meta Description
-    #             meta_keyword:
-    #                 label: Meta Keyword
-    # # Связь с магазинами
-    # stores:
-    #     label: Магазины
-    #     type: repeater
-    #     form:
-    #         fields:
-    #             store_id:
-    #                 label: ID магазина
+      label: Активна
+      type: switch
+      span: auto
+      default: true
+      tab: Основное
+
+    _image_section:
+      label: Изображения
+      type: section
+      tab: Основное
+
+    image:
+      label: Изображение
+      type: mediafinder
+      mode: image
+      span: auto
+      tab: Основное
+
+    menu_image:
+      label: Изображение в меню
+      type: mediafinder
+      mode: image
+      span: auto
+      tab: Основное
+
+    sort_order:
+      label: Порядок сортировки
+      type: number
+      span: auto
+      tab: Основное
+
+    tags:
+      label: Теги
+      type: text
+      span: full
+      tab: Основное
+
+
+
+
+
+
+    desc_ekb:
+      label: "Описание для ЕКБ"
+      type: richeditor
+      tab: Региональное
+
+    desc_kzn:
+      label: "Описание для Казань"
+      type: richeditor
+      tab: Региональное
+
+    desc_krasnodar:
+      label: "Описание для Краснодар"
+      type: richeditor
+      tab: Региональное
+
+    desc_nn:
+      label: "Описание для НН"
+      type: richeditor
+      tab: Региональное
+
+    desc_novosib:
+      label: "Описание для Новосиб"
+      type: richeditor
+      tab: Региональное
+
+    desc_samara:
+      label: "Описание для Самара"
+      type: richeditor
+      tab: Региональное
+
+    desc_spb:
+      label: "Описание для СПБ"
+      type: richeditor
+      tab: Региональное
+
+    desc_tula:
+      label: "Описание для Тула"
+      type: richeditor
+      tab: Региональное
+
+    desc_chel:
+      label: "Описание для Челябинск"
+      type: richeditor
+      tab: Региональное
+
+    desc_perm:
+      label: "Описание для Пермь"
+      type: richeditor
+      tab: Региональное
+
+
+    brands:
+      label: Бренды
+      type: relation
+      relation: brands
+      tab: Бренды
+
+    faq:
+      label: ЧаВо
+      type: relation
+      relation: faq
+      tab: ЧаВо
+
+    links:
+      label: Ссылки
+      type: relation
+      relation: links
+      tab: Ссылки
+
+    filter_attributes:
+      label: Атрибуты в фильтре
+      type: relation
+      relation: filter_attributes
+      tab: Фильтр
+
+    noindex:
+      label: Не индексировать
+      type: switch
+      span: auto
+      tab: SEO
+
+    meta_title:
+      label: Заголовок в браузере
+      type: text
+      tab: SEO
+
+    meta_description:
+      label: Метаописание
+      type: text
+      tab: SEO
+
+    meta_keyword:
+      label: Ключевые слова
+      type: text
+      tab: SEO
+
+    meta_h1:
+      label: H1
+      type: text
+      tab: SEO
+
+    extra_h1:
+      label: Дополнительный H1
+      type: text
+      tab: SEO
+
+    desc_extra:
+      label: "Доп. описание"
+      type: richeditor
+      tab: SEO
+
+
+
+
+    top:
+      label: "Top"
+      type: checkbox
+      span: auto
+      tab: Тех.данные
+
+    catdown:
+      label: "Catdown"
+      type: checkbox
+      span: auto
+      tab: Тех.данные
+
+    column:
+      label: "Column"
+      type: number
+      span: auto
+      tab: Тех.данные
+
+    product_counter:
+      label: "Product Counter"
+      type: number
+      span: auto
+      tab: Тех.данные
+
+    yvideo_image:
+      label: "YVideo Image"
+      type: text
+      span: auto
+      tab: Тех.данные
+
