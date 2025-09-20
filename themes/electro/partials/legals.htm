@@ -1,0 +1,148 @@
+<main class="main">
+    <div class="business-page bg">
+        <div class="inner pb-30 pt-30 grid gap-15">
+            <div class="page-header">
+                <div class="page-header__title">
+                    <h1 class="h1">{{ data.h1 }}</h1>
+                </div>
+                <div class="page-nav">
+                    <div class="page-nav__item"><a href="">Главная</a></div>
+                    <div class="page-nav__item"><a href="">О компании</a></div>
+                    <div class="page-nav__item"><a href="">Преимущества для юридических лиц</a></div>
+                </div>
+            </div>
+            <div class="page-header__descr">{{ data.description }}</div>
+        </div>
+        
+        <div class="grid gap-60">
+
+            <section class="inner advants">
+                {% for item in data.advantages_items %}
+                    <div class="advant">
+                        <i class="icon {{ item.icon_class }}"></i>
+                        <div class="h2">{{ item.title }}</div>
+                        <p class="light">{{ item.description|nl2br }}</p>
+                    </div>
+                {% endfor %}
+            </section>
+
+            <section class="numbers">
+                <div class="numbers__bg"><img src="{{ data.numbers_bg|media }}" alt="{{ data.numbers_title }}"></div>
+                <div class="numbers__inner inner">
+                    <h2 class="h0 txt-center">{{ data.numbers_title }}</h2>
+                    <div class="numbers__list">
+                        {% for item in data.numbers_items %}
+                            <div class="number">
+                                <div class="number__label">{{ item.up|formatSpan|raw }}</div>
+                                <div class="h2">{{ item.down }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <section class="inner">
+                <div class="page-header mb-20">
+                    <h2 class="h1">{{ data.how_title }}</h2>
+                </div>
+                <div class="steps">
+                    <div class="steps__img"><img src="{{ data.how_image|media }}" alt="{{ data.how_title }}"></div>
+                    {% for item in data.how_items %}
+                        <div class="step">
+                            <div class="step__num">{{ loop.index }}</div>
+                            <div class="step__main">
+                                <div class="h2">{{ item.title }}</div>
+                                <p class="light">{{ item.description|nl2br }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="step _contacts">
+                        <a class="btn _big _hover popupActivation" href="" data-popup="callback"><b>{{ data.how_form_button_title }}</b></a>
+                        <div class="step__social">
+                            <a href="{{ fias_telegram }}"><i class="icon icon-telegram"></i></a>
+                            <a href="{{ fias_whatsapp }}"><i class="icon icon-whatsapp-fill"></i></a>
+                            <a href="tel:{{ fias_phone_main }}"><i class="icon icon-call"></i></a>
+                            <a href="mailto:{{ fias_contact_mail }}"><i class="icon icon-email2"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="inner">
+                <div class="page-header mb-20">
+                    <h2 class="h1">{{ data.service_title }}</h2>
+                </div>
+                <div class="v-tabs" data-v-tabs="">
+                    <div class="v-tabs__list h2">
+                        {% for item in data.service_items %}
+                            <a href="" class="{{ not loop.index0 ? '_active' : '' }}">{{ item.title }}</a>
+                        {% endfor %}
+                    </div>
+
+                    <div class="v-tabs__contents">
+                        {% for item in data.service_items %}
+                            <div class="v-tabs__content {{ not loop.index0 ? '_active' : '' }}">
+                                <div class="v-tabs__main">
+                                    <div class="v-tabs__header h2">{{ item.title }}</div>
+                                    <div class="text-block _alt">
+                                        {{ item.description|raw }}
+                                    </div>
+                                </div>
+                                <img src="{{ item.image|media }}" alt="{{ item.title }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-banner">
+                <div class="form-banner__bg"><img src="{{ data.callback_bg|media }}" alt=""></div>
+                <div class="form-banner__inner inner">
+                    <form class="form-bg" data-toggle="validator" enctype="multipart/form-data" id="form-formcreator{{ module_id }}">
+                        <div class="form-bg__header">
+                            <h2 class="h2">{{ data.callback_form_title }}</h2>
+                            <p class="light fz-18">{{ data.callback_form_subtitle }}</p>
+                        </div>
+                        <div class="form-bg__inputs">
+                            <input class="input-alt" type="text" name="form_input[0][Имя]" placeholder="Имя">
+                            <div class="form-bg__row">
+                                <input class="input-alt mask" type="tel" name="form_input[1][Телефон]" placeholder="Телефон *" required>
+                                <input class="input-alt" type="email" name="form_input[2][Email]" placeholder="Email *" required>
+                            </div>
+                            <textarea class="input-alt" name="form_input[3][Сообщение]" placeholder="Сообщение"></textarea>
+                        </div>
+                        <div class="form-bg__btns">
+                            <button type="submit" class="btn _big _hover" href=""><b>{{ data.callback_form_button_title }}</b></button>
+                            <div class="social _auto">
+                                <a href="{{ fias_telegram }}"><img src="img/tg.svg" alt=""></a>
+                                <a href="{{ fias_whatsapp }}"><img src="img/wa.svg" alt=""><span>*</span></a>
+                                <a href="{{ fias_max }}"><img src="img/max.svg" alt=""></a></div>
+                                <!--.callback__social
+                                    a(href="")
+                                        i.icon.icon-telegram
+                                    a(href="")
+                                        i.icon.icon-whatsapp-fill
+                                    a(href="")
+                                        i.icon.icon-call
+                                    a(href="")
+                                        i.icon.icon-email2
+                                    -->
+                            </div>
+                        <div class="form-bg__consent">
+                            <label class="checkbox _start">
+                                <input class="checkbox__input" type="checkbox" name="form_input[4][Согласен]" checked>
+                                <span class="checkbox__mask"></span><span class="checkbox__label">{{ data.callback_form_agreement|raw }}</span>
+                            </label>
+                        </div>
+
+                        <input type="hidden" name="link_page" value="{{ link_page }}" />
+                        <input type="hidden" name="module_name" value="Заявка на КП от юридического лица" />
+                        <input type="hidden" name="module_id" value="{{ module_id }}" />
+                        <input type="hidden" name="form_success" value="Спасибо! Мы свяжемся с Вами в ближайшее время." />		
+
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>

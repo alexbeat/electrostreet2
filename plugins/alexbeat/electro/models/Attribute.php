@@ -34,7 +34,8 @@ class Attribute extends Model
             'otherKey' => 'attribute_id',
             'table' => 'oc_category_filter_attributes',
             'pivot' => [
-                'sort_order'
+                'sort_order',
+                'show_in_card',
             ],
         ]
     ];

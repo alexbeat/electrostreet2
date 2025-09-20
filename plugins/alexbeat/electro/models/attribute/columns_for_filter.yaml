@@ -28,3 +28,6 @@ columns:
       sortable: true             
   pivot[sort_order]:
       label: Сортировка
+  pivot[show_in_card]:
+      label: Показывать в карточке
+      type: switch      

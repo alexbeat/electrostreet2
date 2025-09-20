@@ -34,12 +34,12 @@ class Category extends Model
             'Alexbeat\Electro\Models\CategoryFaq',
             'key' => 'category_id',
             'otherKey' => 'category_id'
-        ],       
+        ],
         'links' => [
             'Alexbeat\Electro\Models\CategoryLink',
             'key' => 'category_id',
             'otherKey' => 'category_id'
-        ],               
+        ],
         // 'descriptions' => [
         //     'Alexbeat\Electro\Models\CategoryDescription',
         //     'key' => 'category_id',
@@ -69,11 +69,12 @@ class Category extends Model
             'Alexbeat\Electro\Models\Attribute',
             'table' => 'oc_category_filter_attributes',
             'key' => 'category_id',
-            'otherKey' => 'attribute_id',     
+            'otherKey' => 'attribute_id',
             'pivot' => [
-                'sort_order'
-            ],            
-        ],          
+                'sort_order',
+                'show_in_card',
+            ],
+        ],
     ];
 
     // Функция для получения всех подкатегорий рекурсивно
@@ -187,12 +188,17 @@ class Category extends Model
 
 
 
-    public function getFilterAttributes()
+    public function getFilterAttributes($show_in_card_only = false)
     {
         // Получаем attribute_id всех записей в отношениях filter_attributes для текущей категории
         $attributes = $this->filter_attributes()
-            ->orderBy('oc_category_filter_attributes.sort_order')
-            ->get();        
+            ->orderBy('oc_category_filter_attributes.sort_order');
+
+        if ($show_in_card_only) {
+            $attributes = $attributes->where('show_in_card', 1);
+        }
+        $attributes = $attributes->get();
+
 
         // Если атрибуты найдены, возвращаем их
         if (count($attributes)) {
@@ -203,8 +209,11 @@ class Category extends Model
         $parent = $this->parent;
         while ($parent) {
             $attributes = $parent->filter_attributes()
-                ->orderBy('oc_category_filter_attributes.sort_order')
-                ->get();   
+                ->orderBy('oc_category_filter_attributes.sort_order');
+            if ($show_in_card_only) {
+                $attributes = $attributes->where('show_in_card', 1);
+            }
+            $attributes = $attributes->get();
             if (!empty($attributes)) {
                 return $attributes;
             }
@@ -212,8 +221,6 @@ class Category extends Model
         }
 
         // Если у родительских категорий тоже нет атрибутов
-        return Attribute::whereIn('attribute_id', [0])->get();//12, 13, 14, 15, 28, 221, 933,
+        return Attribute::whereIn('attribute_id', [0])->get(); //12, 13, 14, 15, 28, 221, 933,
     }
-
-
 }

@@ -153,11 +153,11 @@ class CatalogController extends Controller
             $products_query->$method($sortField);
         } else {
             // $products_query->orderBy('sort_order');
-            $products_query->orderByDesc('product_id');       
+            $products_query->orderByDesc('product_id');
             // trace_log($products_query->toSql());     
         }
 
-        
+
 
         // пагинация
         $page = input('page', 1);
@@ -214,15 +214,25 @@ class CatalogController extends Controller
                 ->limit(1)
         ]);
 
+        $card_atribute_ids = $category->getFilterAttributes(true)->lists('attribute_id');
 
         $products_query = $products_query->paginate($per_page);
 
-        $products_query->each(function ($product) {
+        $products_query->each(function ($product) use ($card_atribute_ids) {
             $product->special = $product->special ? $product->special : $product->discount;
             if ($product->special > $product->price) {
                 $product->price = $product->special;
             }
             $product->skidka = number_format($product->price - $product->special, 0, '', ' ') . ' ₽';
+
+            if (!empty($card_atribute_ids)) {
+                $product->card_attributes = $product->atributy()
+                    ->whereIn('oc_product_attribute.attribute_id', $card_atribute_ids)
+                    ->orderByRaw('FIELD(oc_product_attribute.attribute_id, ' . implode(',', $card_atribute_ids) . ')')
+                    ->get();
+            } else {
+                $product->card_attributes = [];
+            }
         });
 
         $pagination = new Pagination();
@@ -235,6 +245,7 @@ class CatalogController extends Controller
         $list_content = $this->renderPartial('category', [
             'products' => $products_query,
             'category_id' => $category_id,
+            'card_atribute_ids' => $card_atribute_ids,
             'page' => $page,
             'url' => $url,
             'fias_telegram' => input('fias_telegram'),
@@ -284,7 +295,7 @@ class CatalogController extends Controller
 
         $switch_attributes = [];
 
-        $atributy = $category->getFilterAttributes();//AttributeModel::whereIn('attribute_id', $attributeIds)->get();
+        $atributy = $category->getFilterAttributes(); //AttributeModel::whereIn('attribute_id', $attributeIds)->get();
 
         $atributy->each(function ($atribut) use ($productIds, $slider_attributes, $checkboxes_attributes, $switch_attributes, &$filter_params_count) {
             $pa_query = ProductAttribute::query()
@@ -323,7 +334,7 @@ class CatalogController extends Controller
                 $atribut->type = 'checkboxes';
 
                 // Правильное использование distinct и select
-                $uniqueTextsQuery = $pa_query->select('text')->distinct()->where('text','!=','');
+                $uniqueTextsQuery = $pa_query->select('text')->distinct()->where('text', '!=', '');
                 $atribut->selected_count = $uniqueTextsQuery->count();
                 // echo $atribut->selected_count;
 

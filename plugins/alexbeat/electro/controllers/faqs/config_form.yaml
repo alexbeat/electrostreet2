@@ -1,0 +1,11 @@
+name: Частые вопросы
+form: $/alexbeat/electro/models/faq/fields.yaml
+modelClass: Alexbeat\Electro\Models\Faq
+defaultRedirect: alexbeat/electro/faqs
+create:
+    redirect: 'alexbeat/electro/faqs/update/:id'
+    redirectClose: alexbeat/electro/faqs
+update:
+    title: Изменить
+    redirect: alexbeat/electro/faqs
+    redirectClose: alexbeat/electro/faqs

@@ -1,0 +1,22 @@
+fields:
+  content:
+    type: repeater
+    displayMode: builder
+    prompt: "Добавить новый раздел"
+    form:
+      fields:
+        title:
+          label: "Название раздела"
+          type: text
+        questions:
+          type: repeater
+          prompt: "Добавить новый вопрос"
+          form:
+            fields:
+              title:
+                label: "Вопрос"
+                type: text
+              answer:
+                label: "Ответ"
+                type: textarea
+                size: tiny

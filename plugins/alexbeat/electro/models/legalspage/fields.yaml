@@ -1,0 +1,129 @@
+fields:
+  h1: 
+    label: "Заголовок"   
+    type: text
+    span: full
+  description:
+    label: "Описание"
+    type: textarea
+    size: tiny
+    span: full
+  _section_advantages:
+    label: Преимущества
+    type: section    
+  advantages_items:
+    label: Карточки
+    type: repeater
+    # displayMode: builder
+    # prompt: "Добавить"
+    form:
+      fields:
+        title:
+          label: "Название"
+          type: text
+          span: auto
+        icon_class:
+          label: "Класс иконки"
+          type: text
+          span: auto
+        description:
+          label: "Описание"
+          type: textarea
+          size: tiny
+  _section_numbers:
+    label: Цифры
+    type: section
+  numbers_title: 
+    label: "Заголовок"
+    type: text
+    span: auto
+  numbers_bg:
+    label: Фон
+    type: mediafinder
+    mode: image
+    span: auto  
+  numbers_items:
+    label: Карточки
+    type: repeater
+    form:
+      fields:
+        up:
+          label: Верх
+          type: text
+          span: auto
+        down:
+          label: Низ
+          type: text
+          span: auto
+  _section_how:
+    label: Как мы работаем с юридическими лицами
+    type: section
+  how_title:
+    label: "Заголовок"
+    type: text
+    span: auto
+  how_image:
+    label: "Картинка"
+    type: mediafinder
+    mode: image
+    span: auto
+  how_items:
+    label: Карточки
+    type: repeater
+    form:
+      fields:
+        title:
+          label: Заголовок
+          type: text
+        description:
+          label: Описание
+          type: textarea
+          size: tiny
+  how_form_button_title:
+    label: "Заголовок кнопки формы"
+    type: text
+    span: auto
+  _section_service:
+    label: Сервис и услуги
+    type: section  
+  service_items:
+    label: Карточки
+    type: repeater
+    form:
+      fields:
+        title:
+          label: Заголовок
+          type: text
+          span: auto
+        image:
+          label: Картинка
+          type: mediafinder
+          mode: image          
+          span: auto
+        description:
+          label: Описание
+          type: richeditor
+
+  _section_callback:
+    label: Обратная связь
+    type: section            
+  callback_bg:
+    label: "Фон"    
+    type: mediafinder
+    mode: image
+  callback_form_title:
+    label: "Заголовок формы"
+    type: text
+    span: full
+  callback_form_subtitle:
+    label: "Подзаголовок формы"
+    type: text
+    span: full
+  callback_form_button_title:
+    label: "Заголовок кнопки формы"
+    type: text
+    span: full
+  callback_form_agreement:
+    label: "Текст надписи о соглашении"
+    type: richeditor
+    span: full

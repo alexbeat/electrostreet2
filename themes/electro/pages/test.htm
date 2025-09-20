@@ -23,9 +23,68 @@ use Alexbeat\Electro\Models\Category;
 // print_r($product->attribute_groups);
 // echo file_get_contents('/var/www/electrostreet/data/www/electrostreet.ru/img/sbp.svg');
 
-$category = Category::find(63);
-print_r($category->getFilterAttributes());
+$category = Category::find(62);
+// print_r($category->getFilterAttributes());
+// print_r($category->getFilterAttributes()->lists('attribute_id'));
+
+//         $card_atribute_ids2 = $category->filter_attributes()
+//             ->withPivot('sort_order') // Загружаем поле sort_order из промежуточной таблицы
+//             ->orderBy('oc_category_filter_attributes.sort_order')
+//             ->pluck('oc_category_filter_attributes.attribute_id');
+// print_r($card_atribute_ids2);
+
+// $products_query = Product::query()->active();
+// $per_page = 10;
+
+//         $card_atribute_ids = $category->getFilterAttributes(true)->lists('attribute_id');
+
+
+//         $products_query = $products_query->paginate($per_page);
+
+//         $products_query->each(function ($product) use ($card_atribute_ids) {
+//             $product->special = $product->special ? $product->special : $product->discount;
+//             if ($product->special > $product->price) {
+//                 $product->price = $product->special;
+//             }
+//             $product->skidka = number_format($product->price - $product->special, 0, '', ' ') . ' ₽';
+
+//         if (!empty($card_atribute_ids)) {
+//             $product->card_attributes = $product->atributy()
+//                 ->whereIn('oc_product_attribute.attribute_id', $card_atribute_ids)
+//                 ->orderByRaw('FIELD(oc_product_attribute.attribute_id, ' . implode(',', $card_atribute_ids) . ')')
+//                 ->get();            
+//         } else {
+//             $product->card_attributes = [];
+//         }
+
+//         });
+
+
+
 
 }
 ==
 {#{% component 'catalog' %}#}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Быстрый старт. Размещение интерактивной карты на странице</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=1b3b30d1-0ab0-4675-ba24-d0e534763ba0&lang=ru_RU" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+        ymaps.ready(init);
+        function init(){
+            var myMap = new ymaps.Map("map", {
+                center: [55.76, 37.64],
+                zoom: 7
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div id="map" style="width: 600px; height: 400px"></div>
+</body>
+
+</html>

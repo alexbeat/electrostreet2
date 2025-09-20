@@ -60,6 +60,9 @@ filter_attributes:
       fields:
         pivot[sort_order]:
           label: Порядок
+        pivot[show_in_card]:
+          label: Показывать в карточке
+          type: switch          
 
 links:
   label: Ссылки

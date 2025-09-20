@@ -1,0 +1,35 @@
+<div class="faq-page bg">
+    <div class="inner faq">
+        <aside class="sidebar">
+            <div class="select">
+                <div class="select__main">
+                    <div class="h2">Оглавление</div>
+                    <div class="select__value"></div>
+                    <input class="select__input" type="checkbox">
+                </div>
+                <div class="select__options">
+                    {% for section in faq %}
+                        <a class="anchorlink select__option {{ not loop.index0 ? '__active' : '' }}" href="#block{{ loop.index }}">{{ section.title }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
+        <article class="faq__list">
+            {% for section in faq %}
+                <h2 class="h2">{{ section.title }}
+                    <div class="scrollwatch _active" id="block{{ loop.index }}"></div>
+                </h2>
+                {% for question in section.questions %}
+                    <div class="acrdn" data-accordion="item">
+                        <div class="acrdn__btn" data-accordion="header">{{ question.title }}</div>
+                        <div class="acrdn__drop" data-accordion="dropdown">
+                            <div class="text">
+                                <p>{{ question.answer }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </article>
+    </div>
+</div>

@@ -44,62 +44,78 @@
                 </div>
             </div>
             <div class="params">
-                    {% for attribute in product.atributy %}
+                    {% if product.card_attributes|length %}
+                        {% for attribute in product.card_attributes %}
+                            <div class="param">
+                                <div class="param__value">{{ attribute['text'] }}</div>
+                                <div class="param__label">{{ attribute['name'] }}</div>
+                            </div>
+                        {% endfor %}                    
+                    {% else %}
+                        {% for attribute in product.atributy %}
                         
-                        {#Атрибут:{{ attribute['attribute_id'] }}#}
-                        
-                        {% if attribute['attribute_id']=='15' %}
-                        <div class="param">
-                            <div class="param__value">{{ attribute['text'] }} кг</div>
-                            <div class="param__label">Вес</div>
-                        </div>
-                        {% endif %}
+                            {#Атрибут:{{ attribute['attribute_id'] }}#}
+                    
+                            {% if card_atribute_ids|includes(attribute['attribute_id']) %}
+                                <div class="param">
+                                    <div class="param__value">{{ attribute['text'] }}</div>
+                                    <div class="param__label">{{ attribute['name'] }}</div>
+                                </div>
+                            {% endif %}
 
-                        {% if attribute['attribute_id']=='12' %}
-                        <div class="param">
-                            <div class="param__value">{{ attribute['text'] }} км/ч</div>
-                            <div class="param__label">Скорость</div>
-                        </div>
-                        {% endif %}
+                            {% if attribute['attribute_id']=='15' %}
+                            <div class="param">
+                                <div class="param__value">{{ attribute['text'] }} кг</div>
+                                <div class="param__label">Вес</div>
+                            </div>
+                            {% endif %}
 
-                        {% if attribute['attribute_id']=='221' %}
-                        <div class="param">
-                            <div class="param__value">{{ attribute['text'] }}</div>
-                            <div class="param__label">Мощность</div>
-                        </div>
-                        {% endif %}
+                            {% if attribute['attribute_id']=='12' %}
+                            <div class="param">
+                                <div class="param__value">{{ attribute['text'] }} км/ч</div>
+                                <div class="param__label">Скорость</div>
+                            </div>
+                            {% endif %}
 
-                        {% if attribute['attribute_id']=='13' %}
-                        <div class="param">
-                            <div class="param__value">{{ attribute['text'] }} км</div>
-                            <div class="param__label">Запас хода</div>
-                        </div>
-                        {% endif %}
+                            {% if attribute['attribute_id']=='221' %}
+                            <div class="param">
+                                <div class="param__value">{{ attribute['text'] }}</div>
+                                <div class="param__label">Мощность</div>
+                            </div>
+                            {% endif %}
 
-                        {% if attribute['attribute_id']=='14' %}
-                        <div class="param">
-                            <div class="param__value">{{ attribute['text'] }}''</div>
-                            <div class="param__label">Диаметр</div>
-                        </div>
-                        {% endif %}
+                            {% if attribute['attribute_id']=='13' %}
+                            <div class="param">
+                                <div class="param__value">{{ attribute['text'] }} км</div>
+                                <div class="param__label">Запас хода</div>
+                            </div>
+                            {% endif %}
 
-                        {% if attribute['attribute_id']=='933' %}
-                        <div class="param">
-                            <div class="param__value">{{ attribute['text'] }} см<sup>3</sup></div>
-                            <div class="param__label">Объем двигателя</div>
-                        </div>
-                        {% endif %}         
+                            {% if attribute['attribute_id']=='14' %}
+                            <div class="param">
+                                <div class="param__value">{{ attribute['text'] }}''</div>
+                                <div class="param__label">Диаметр</div>
+                            </div>
+                            {% endif %}
 
-                        {% if attribute['attribute_id']=='28' %}
-                        <div class="param">
-                            <div class="param__value">{{ attribute['text'] }}</div>
-                            <div class="param__label">Рама</div>
-                        </div>
-                        {% endif %}    
+                            {% if attribute['attribute_id']=='933' %}
+                            <div class="param">
+                                <div class="param__value">{{ attribute['text'] }} см<sup>3</sup></div>
+                                <div class="param__label">Объем двигателя</div>
+                            </div>
+                            {% endif %}         
+
+                            {% if attribute['attribute_id']=='28' %}
+                            <div class="param">
+                                <div class="param__value">{{ attribute['text'] }}</div>
+                                <div class="param__label">Рама</div>
+                            </div>
+                            {% endif %}    
+
+                        {% endfor %}                            
+                    {% endif %}
 
 
-
-                    {% endfor %}
             </div>
         </div><a href="{{ product.href }}"><b>{{ product.name }}</b></a>
         <div class="product__price">

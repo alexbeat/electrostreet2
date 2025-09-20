@@ -1,0 +1,11 @@
+name: Юридическим лицам
+form: $/alexbeat/electro/models/legalspage/fields.yaml
+modelClass: Alexbeat\Electro\Models\LegalsPage
+defaultRedirect: alexbeat/electro/legalspage
+create:
+    redirect: 'alexbeat/electro/legalspage/update/:id'
+    redirectClose: alexbeat/electro/legalspage
+update:
+    title: Изменить
+    redirect: alexbeat/electro/legalspage
+    redirectClose: alexbeat/electro/legalspage

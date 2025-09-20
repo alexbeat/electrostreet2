@@ -1,0 +1,13 @@
+url = "/faq"
+layout = "std"
+title = "Частые вопросы"
+==
+<?php
+use Alexbeat\Electro\Models\Faq;
+
+function onStart() {
+    $this['faq'] = Faq::instance()->content;
+}
+?>
+==
+{% partial 'faq' %}

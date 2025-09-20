@@ -1,2 +1,8 @@
 v1.0.1:
     - 'Initialize plugin'
+v1.0.2:
+    - 'Created table alexbeat_electro_legals_page'
+    - builder_table_create_alexbeat_electro_legals_page.php
+v1.0.3:
+    - 'Updated table alexbeat_electro_legals_page'
+    - builder_table_update_alexbeat_electro_legals_page.php

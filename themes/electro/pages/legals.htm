@@ -1,0 +1,13 @@
+title = "Юридическим лицам"
+url = "/jurlicam"
+layout = "std"
+==
+<?php
+use Alexbeat\Electro\Models\LegalsPage;
+
+function onStart() {
+    $this['data'] = LegalsPage::instance();
+}
+?>
+==
+{% partial 'legals' %}
