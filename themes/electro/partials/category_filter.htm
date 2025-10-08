@@ -60,7 +60,7 @@
                             <a class="filter-alt__clear" data-clear="attr{{ attribute.attribute_id }}_from" data-clear2="attr{{ attribute.attribute_id }}_to"><i class="icon icon-close"></i></a>
                             <div class="filter-alt__num">{{ attribute.from }} - {{ attribute.to }}</div>
                         {% endif %}
-                        <div class="select__value">{{ attribute.name }}</div>
+                        <div class="select__value">{{ attribute.filter_title|default(attribute.name) }}</div>
                         <input class="select__input" type="checkbox">
                     </div>
                     <div class="select__options">
@@ -85,7 +85,7 @@
                         <a class="filter-alt__clear" data-clear="attr{{ attribute.attribute_id }}[]"><i class="icon icon-close"></i></a>
                         <div class="filter-alt__num">{{ attribute.selected_count }}</div>
                     {% endif %}
-                    <div class="select__value">{{ attribute.name }}</div>
+                    <div class="select__value">{{ attribute.filter_title|default(attribute.name) }}</div>
                     <input class="select__input" type="checkbox">
                 </div>
                 <div class="select__options">

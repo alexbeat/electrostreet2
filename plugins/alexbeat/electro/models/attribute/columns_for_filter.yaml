@@ -9,6 +9,14 @@ columns:
       select: name
       searchable: true
       sortable: true
+  filter_title:
+    label: Заголовок в фильтре
+    searchable: true
+    sortable: true
+  measure:
+    label: Единица измерения
+    searchable: true
+    sortable: true      
   filter_type_id:
       label: Тип фильтра
       type: selectable

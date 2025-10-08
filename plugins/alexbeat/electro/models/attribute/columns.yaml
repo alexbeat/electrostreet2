@@ -1,34 +1,42 @@
 columns:
   attribute_id:
-      searchable: true
-      label: ID
-      sortable: true
+    searchable: true
+    label: ID
+    sortable: true
   name:
-      label: Название
-      relation: attribute_description
-      select: name
-      searchable: true
-      sortable: true
+    label: Название
+    relation: attribute_description
+    select: name
+    searchable: true
+    sortable: true
+  filter_title:
+    label: Заголовок в фильтре
+    searchable: true
+    sortable: true
+  measure:
+    label: Единица измерения
+    searchable: true
+    sortable: true
   filter_type_id:
-      label: Тип фильтра
-      type: selectable
-      options:
-        0: Чекбоксы
-        1: Диапазон
-        2: Да/Нет
-      sortable: true   
+    label: Тип фильтра
+    type: selectable
+    options:
+      0: Чекбоксы
+      1: Диапазон
+      2: Да/Нет
+    sortable: true
   sort_type_id:
-      label: Тип сортировки
-      type: selectable
-      options:
-        0: Текст А-Я
-        1: Текст Я-А
-        2: Число по возрастанию
-        3: Число по убыванию
-      sortable: true                
+    label: Тип сортировки
+    type: selectable
+    options:
+      0: Текст А-Я
+      1: Текст Я-А
+      2: Число по возрастанию
+      3: Число по убыванию
+    sortable: true
   attribute_group_id:
-      label: Группа
-      relation: attribute_group
-      select: (select name from oc_attribute_group_description where attribute_group_id = oc_attribute.attribute_group_id limit 1)
+    label: Группа
+    relation: attribute_group
+    select: (select name from oc_attribute_group_description where attribute_group_id = oc_attribute.attribute_group_id limit 1)
   sort_order:
-      label: Сортировка
+    label: Сортировка

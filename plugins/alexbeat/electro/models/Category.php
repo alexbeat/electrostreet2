@@ -3,6 +3,7 @@
 namespace Alexbeat\Electro\Models;
 
 use Model;
+use DB;
 
 class Category extends Model
 {
@@ -118,6 +119,11 @@ class Category extends Model
         return $this->getAttr('name');
     }
 
+    public function getTitleAttribute()
+    {
+        return $this->getAttr('name');
+    }
+
     public function getDescriptionAttribute()
     {
         return $this->getAttr('description');
@@ -223,4 +229,40 @@ class Category extends Model
         // Если у родительских категорий тоже нет атрибутов
         return Attribute::whereIn('attribute_id', [0])->get(); //12, 13, 14, 15, 28, 221, 933,
     }
+
+    public function getUrlAttribute() {
+        return $this->getUrl();
+    }
+
+    public function getUrl()
+    {
+        // Накопитель для части URL, чтобы обеспечить вложенность
+        $slugs = [];
+        $category = $this;
+
+        // Проходим по всем родительским категориям, чтобы собрать все слаги
+        while ($category) {
+            // Получаем SEO URL для текущей категории из таблицы oc_seo_url
+            $seoUrl = DB::table('oc_seo_url')
+                ->where('query', 'category_id=' . $category->category_id)
+                ->value('keyword');
+
+            if ($seoUrl) {
+                $slugs[] = $seoUrl;
+            } else {
+                // Если SEO URL нет, используем идентификатор категории в качестве запасного варианта
+                $slugs[] = (string) $category->category_id;
+            }
+
+            // Переходим к следующему родителю
+            $category = Category::find($category->parent_id);
+        }
+
+        // Переворачиваем массив, так как начинали с дочерних категорий, и формируем URL
+        $slugs = array_reverse($slugs);
+        $urlPath = implode('/', $slugs).'/';
+        
+        return $urlPath;
+    }
+
 }

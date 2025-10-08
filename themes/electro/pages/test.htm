@@ -23,7 +23,7 @@ use Alexbeat\Electro\Models\Category;
 // print_r($product->attribute_groups);
 // echo file_get_contents('/var/www/electrostreet/data/www/electrostreet.ru/img/sbp.svg');
 
-$category = Category::find(62);
+// $category = Category::find(62);
 // print_r($category->getFilterAttributes());
 // print_r($category->getFilterAttributes()->lists('attribute_id'));
 
@@ -59,7 +59,11 @@ $category = Category::find(62);
 
 //         });
 
+$product = Product::find(1843);
 
+$product->product_specials()->where('customer_group_id',1)->dd();
+
+// print_r($product->product_special()->dd());
 
 
 }

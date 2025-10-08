@@ -1,0 +1,13 @@
+title = "Главная"
+url = "/"
+layout = "std"
+==
+<?php
+use Alexbeat\Electro\Models\MainPage;
+
+function onStart() {
+    $this['data'] = MainPage::instance();
+}
+?>
+==
+{% partial 'main' %}

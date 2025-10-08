@@ -37,8 +37,10 @@ class Product extends Model
     public $hasMany = [
         'images' => ['Alexbeat\Electro\Models\ProductImage', 'key' => 'product_id', 'otherKey' => 'product_id'],
         'product_to_store' => ['Alexbeat\Electro\Models\ProductToStore', 'key' => 'product_id', 'otherKey' => 'product_id'],
-        'product_discount' => ['Alexbeat\Electro\Models\ProductDiscount', 'key' => 'product_id', ],
-        'product_special' => ['Alexbeat\Electro\Models\ProductSpecial', 'key' => 'product_id', ],
+        'product_discount' => ['Alexbeat\Electro\Models\ProductDiscount', 'key' => 'product_id',],
+        'product_specials' => [
+            'Alexbeat\Electro\Models\ProductSpecial', 'key' => 'product_id',
+        ],
     ];
 
     public $belongsToMany = [
@@ -64,9 +66,9 @@ class Product extends Model
             'key' => 'product_id',
             'otherKey' => 'store_id',
             'pivot' => ['product_id', 'store_id',],
-        ],        
+        ],
     ];
-    
+
 
     public function getThumbAttribute()
     {
@@ -100,7 +102,19 @@ class Product extends Model
         return $slug ? '/' . $slug . '/' : null;
     }
 
-    public function getLimitedImagesAttribute() {
+    public function getUrlAttribute()
+    {
+        $slug = $this->getSlug();
+        return $slug ? '/' . $slug . '/' : null;
+    }
+
+    public function getNewAttribute()
+    {
+        return $this->date_added > now()->subDays(30) ? true : false;
+    }
+
+    public function getLimitedImagesAttribute()
+    {
         return $this->images()->take(4)->get();
     }
 
@@ -133,7 +147,28 @@ class Product extends Model
         });
     }
 
-    public function scopeActive($query) {
+    public function scopeActive($query)
+    {
         return $query->where('status', 1);
+    }
+
+    public function scopeNew($query)
+    {
+        return $query->where('date_added', '>', now()->subDays(30));
+    }
+
+    public function scopeHit($query)
+    {
+        return $query->where('hit', 1);
+    }
+
+    public function scopeSale($query, $customer_group_id = null)
+    {
+        if (!is_null($customer_group_id)) {
+            $query->whereHas('product_specials', function ($q) use ($customer_group_id) {
+                $q->where('customer_group_id', $customer_group_id)
+                    ->whereRaw("((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW()))");
+            });
+        }
     }
 }

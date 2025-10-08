@@ -37,6 +37,10 @@ navigation:
         icon: icon-life-ring
         order: 10
         sideMenu:
+            electro-main-page:
+                label: Главная
+                url: alexbeat/electro/mainpage
+                icon: icon-sitemap           
             electro-faq:
                 label: Частые вопросы
                 url: alexbeat/electro/faqs

@@ -1,0 +1,257 @@
+fields:
+  _section_top_banners:
+    label: Верхние баннеры
+    type: section    
+  top_banners_items:
+    label: Слайды
+    type: repeater
+    form:
+      fields:
+        image:
+          label: "Картинка"
+          type: mediafinder
+          mode: image      
+          span: auto
+        image_mobile:
+          label: "Картинка для мобильного"
+          type: mediafinder
+          mode: image      
+          span: auto          
+        title:
+          label: Заголовок
+          type: text
+          span: auto
+        subtitle:
+          label: Текст под заголовком
+          type: textarea
+          size: tiny
+        button_label:
+          label: "Текст кнопки"
+          type: text
+          span: auto
+        button_link:
+          label: "Ссылка кнопки"
+          type: text
+          span: auto          
+
+
+  top_banners_block1_title:
+    label: Заголовок блока 1
+    type: text
+    span: full
+  top_banners_block1_subtitle:
+    label: Текст под заголовком блока 1
+    type: textarea
+    size: tiny
+  top_banners_block1_icon_class:
+    label: Класс иконки блока 1
+    type: text
+    span: auto
+  top_banners_block1_link:
+    label: Ссылка блока 1
+    type: text
+    span: auto
+
+  top_banners_block2_title:
+    label: Заголовок блока 2
+    type: text
+    span: full
+  top_banners_block2_subtitle:
+    label: Текст под заголовком блока 2
+    type: textarea
+    size: tiny
+  top_banners_block2_icon_class:
+    label: Класс иконки блока 2
+    type: text
+    span: auto
+  top_banners_block2_link:
+    label: Ссылка блока 2
+    type: text
+    span: auto
+
+  _section_ideal_transport:
+    label: Подберем идеальный транспорт
+    type: section    
+
+  ideal_transport_title:
+    label: "Заголовок"
+    type: text
+    span: auto
+
+  ideal_transport_button_title:
+    label: "Заголовок кнопки"
+    type: text
+    span: auto
+
+  ideal_transport_categories:
+    label: "Категории"
+    type: repeater
+    form:
+      fields:
+        title:
+          label: "Название"
+          type: text
+          span: auto
+        category:
+          label: "Категория"
+          type: dropdown
+          span: auto
+        image:
+          label: "Картинка"
+          type: mediafinder
+          mode: image
+
+  _section_card_categories:
+    label: Карточки категорий
+    type: section
+
+  card_categories_items:
+    label: "Категории"
+    type: repeater
+    form:
+      fields:
+        category:
+          label: "Категория"
+          type: dropdown
+          span: auto
+        image:
+          label: "Картинка"
+          type: mediafinder
+          mode: image
+          span: auto
+
+  _section_brands:
+    label: Бренды
+    type: section
+
+  brands_items:
+    type: repeater
+    form:
+      fields:
+        image:
+          label: "Картинка"
+          type: mediafinder
+          mode: image
+          span: auto
+        link:
+          label: "Ссылка"
+          type: text
+          span: auto
+
+  _section_details:
+    label: Электрострит в деталях
+    type: section
+
+  details_title:
+    label: "Заголовок"
+    type: text
+    span: full
+
+  details_items:
+    label: Карточки
+    type: repeater
+    form:
+      fields:
+        title:
+          label: Заголовок
+          type: text
+          span: auto
+        icon_class:
+          label: Класс иконки
+          type: text
+          span: auto          
+        subtitle:
+          label: Текст под заголовком
+          type: textarea
+          size: tiny
+
+  _section_servicecenter:
+    label: Сервисный центр
+    type: section
+
+  servicecenter_title:
+    label: "Заголовок"
+    type: text
+    span: full    
+
+  servicecenter_subtitle:
+    label: "Текст под заголовком"
+    type: textarea
+    size: tiny
+    span: full          
+
+  servicecenter_image:
+    label: "Картинка"
+    type: mediafinder
+    mode: image
+    span: auto
+
+  servicecenter_bg:
+    label: "Фон"
+    type: mediafinder
+    mode: image    
+    span: auto
+
+  servicecenter_bg_mobile:
+    label: "Фон мобильный"
+    type: mediafinder
+    mode: image
+    span: auto
+
+  servicecenter_items:
+    label: Карточки
+    type: repeater
+    form:
+      fields:
+        title:
+          label: Заголовок
+          type: text
+          span: auto
+        icon_class:
+          label: Класс иконки
+          type: text
+          span: auto    
+
+  _section_showroom:
+    label: Шоурум
+    type: section          
+
+  showroom_title:
+    label: "Заголовок"
+    type: text
+    span: full    
+
+  showroom_subtitle:
+    label: "Текст под заголовком"
+    type: textarea
+    span: full
+
+  _section_franchise:
+    label: Франшиза
+    type: section      
+
+  franchise_title:
+    label: "Заголовок"
+    type: text
+    span: full    
+
+  franchise_subtitle:
+    label: "Текст под заголовком"
+    type: richeditor
+    span: full
+
+  franchise_link_title:
+    label: "Заголовок ссылки"
+    type: text
+    span: auto        
+
+  franchise_link:
+    label: "Ссылка"
+    type: text
+    span: auto
+
+  franchise_image:
+    label: "Картинка"
+    type: mediafinder
+    mode: image
+    span: auto

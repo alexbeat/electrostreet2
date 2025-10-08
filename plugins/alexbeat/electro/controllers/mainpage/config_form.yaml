@@ -1,0 +1,12 @@
+name: Главная страница
+form: $/alexbeat/electro/models/mainpage/fields.yaml
+modelClass: Alexbeat\Electro\Models\MainPage
+defaultRedirect: alexbeat/electro/mainpage
+create:
+    redirect: 'alexbeat/electro/mainpage/update/:id'
+    redirectClose: alexbeat/electro/mainpage
+    title: Создать
+update:
+    redirect: alexbeat/electro/mainpage
+    redirectClose: alexbeat/electro/mainpage
+    title: Изменить

@@ -5,14 +5,12 @@ namespace Alexbeat\Electro\Classes;
 use Cms\Classes\ComponentBase;
 use Cms\Classes\Controller;
 use Alexbeat\Electro\Models\Product;
-use Alexbeat\Electro\Models\Attribute as AttributeModel;
 use Alexbeat\Electro\Models\Manufacturer;
 use Alexbeat\Electro\Models\ProductAttribute;
 use Alexbeat\Electro\Classes\Pagination;
 use Alexbeat\Electro\Models\Category;
 use Alexbeat\Electro\Models\ProductDiscount;
 use Alexbeat\Electro\Models\ProductSpecial;
-use Alexbeat\Electro\Models\Store;
 
 class CatalogController extends Controller
 {
@@ -69,14 +67,7 @@ class CatalogController extends Controller
             $products_query->whereIn('manufacturer_id', $manufacturers);
         }
 
-        // фильтр по цене
-        if (input('price_from')) {
-            $products_query->where('price', '>=', input('price_from'));
-        }
 
-        if (input('price_to')) {
-            $products_query->where('price', '<=', input('price_to'));
-        }
 
         // проход по input-параметрам для фильтрации по атрибутам
         foreach (\Input::all() as $key => $value) {
@@ -112,6 +103,43 @@ class CatalogController extends Controller
                         ->whereIn('text', $list_values);
                 });
             }
+        }
+
+        $products_query->addSelect([
+            '*',
+            'discount' => ProductDiscount::select('price')
+                ->whereColumn('oc_product_discount.product_id', 'oc_product.product_id')
+                ->where('customer_group_id', $customer_group_id)
+                ->where('quantity', '1')
+                ->whereRaw("((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW()))")
+                ->orderBy('priority', 'ASC')
+                ->orderBy('price', 'ASC')
+                ->limit(1)
+        ]);
+
+        $products_query->addSelect([
+            'special' => ProductSpecial::select('price')
+                ->whereColumn('oc_product_special.product_id', 'oc_product.product_id')
+                ->where('customer_group_id', $customer_group_id)
+                ->whereRaw("((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW()))")
+                ->orderBy('priority', 'ASC')
+                ->orderBy('price', 'ASC')
+                ->limit(1)
+        ]);
+
+        // фильтр по цене
+        if (input('price_from')) {
+            //если price >= input('price_from') или discount >= input('price_from')
+            $products_query->where(function($query) use ($customer_group_id) { 
+                $query->where('price', '>=', input('price_from'))
+                // ->orWhere('discount', '>=', input('price_from'))
+                // ->orWhere('special', '>=', input('price_from'))
+                ; 
+            });
+        }
+
+        if (input('price_to')) {
+            $products_query->where('price', '<=', input('price_to'));
         }
 
         $filtered_products_count = $products_query->count();
@@ -192,37 +220,19 @@ class CatalogController extends Controller
         $url = input('url');
         $finalUrl = $this->buildUrlWithParams($url, $params);
 
-        $products_query->addSelect([
-            '*',
-            'discount' => ProductDiscount::select('price')
-                ->whereColumn('oc_product_discount.product_id', 'oc_product.product_id')
-                ->where('customer_group_id', $customer_group_id)
-                ->where('quantity', '1')
-                ->whereRaw("((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW()))")
-                ->orderBy('priority', 'ASC')
-                ->orderBy('price', 'ASC')
-                ->limit(1)
-        ]);
 
-        $products_query->addSelect([
-            'special' => ProductSpecial::select('price')
-                ->whereColumn('oc_product_special.product_id', 'oc_product.product_id')
-                ->where('customer_group_id', $customer_group_id)
-                ->whereRaw("((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW()))")
-                ->orderBy('priority', 'ASC')
-                ->orderBy('price', 'ASC')
-                ->limit(1)
-        ]);
 
         $card_atribute_ids = $category->getFilterAttributes(true)->lists('attribute_id');
 
         $products_query = $products_query->paginate($per_page);
 
         $products_query->each(function ($product) use ($card_atribute_ids) {
-            $product->special = $product->special ? $product->special : $product->discount;
-            if ($product->special > $product->price) {
-                $product->price = $product->special;
-            }
+            $product->price = $product->discount ? $product->discount : $product->price;// берем региональную цену, если есть
+            
+            // $product->special = $product->special ? $product->special : $product->discount;
+            // if ($product->special > $product->price) {
+            //     $product->price = $product->special;
+            // }
             $product->skidka = number_format($product->price - $product->special, 0, '', ' ') . ' ₽';
 
             if (!empty($card_atribute_ids)) {
@@ -279,25 +289,9 @@ class CatalogController extends Controller
 
         $productIds = $products_query->get()->pluck('product_id');
 
-        // $attributeIds = [
-        //     12, 13, 14, 15, 28, 221, 933,
-        // ];
+        $atributy = $category->getFilterAttributes();
 
-        // $attributeIds = $category->getFilterAttributes();
-
-        $slider_attributes = [
-            // 12, 13, 15, 221, 933,
-        ];
-
-        $checkboxes_attributes = [
-            // 28, 14,
-        ];
-
-        $switch_attributes = [];
-
-        $atributy = $category->getFilterAttributes(); //AttributeModel::whereIn('attribute_id', $attributeIds)->get();
-
-        $atributy->each(function ($atribut) use ($productIds, $slider_attributes, $checkboxes_attributes, $switch_attributes, &$filter_params_count) {
+        $atributy->each(function ($atribut) use ($productIds, &$filter_params_count) {
             $pa_query = ProductAttribute::query()
                 ->where('attribute_id', $atribut->attribute_id)
                 ->whereIn('product_id', $productIds);

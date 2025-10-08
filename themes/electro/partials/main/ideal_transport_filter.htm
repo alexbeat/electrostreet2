@@ -1,0 +1,110 @@
+<div class="select _alt _bg _filled">
+    <div class="select__main">
+        <div class="select__value">
+            <div class="select__placeholder">{{ choosed_category_title | default(ideal_transport_categories[0].title) }}</div>
+        </div>
+        <input class="select__input" type="checkbox">
+    </div>
+    <div class="select__options">
+        {% for item in ideal_transport_categories %}
+            <div class="select__option {{ item.category == choosed_category_id ? '_choosed' : '' }}" data-category="{{ item.category }}" data-value="{{ item.title }}" data-picker="{{ item.image | media }}">{{ item.title }}</div>
+        {% endfor %}
+    </div>
+</div>
+
+{% set show_price_range = filter.price_from and filter.price_from != filter.price_min or filter.price_to and filter.price_to != filter.price_max %}
+<div class="select _alt _bg _range {{ show_price_range ? '_filled' : ''}}">
+    <div class="select__main">
+        {% if show_price_range %}
+            <a class="filter-alt__clear" data-clear="price_from" data-clear2="price_to">
+                <i class="icon icon-close"></i>
+            </a>
+            <div class="filter-alt__num">{{ filter.price_from }} - {{ filter.price_to }}</div>
+        {% endif %}
+        <div class="select__value">Цена</div>
+        <input class="select__input" type="checkbox">
+    </div>
+    <div class="select__options">
+        <div class="range-double">
+            <div class="input-interval">
+                <input class="input _border _mini _range1" type="number" name="price_from" value="{{ filter.price_from }}" data-default="{{ filter.price_min }}">
+                <div class="input-interval__separator">—</div>
+                <input class="input _border _mini _range2" type="number" name="price_to" value="{{ filter.price_to }}" data-default="{{ filter.price_max }}">
+            </div>
+            <input class="input-range" type="text" data-min="{{ filter.price_min }}" data-max="{{ filter.price_max }}" data-from="{{ filter.price_from }}" data-to="{{ filter.price_to }}" data-step="100">
+        </div>
+    </div>
+</div>
+
+<div class="select _alt _bg _multi">
+    <div class="select__main">
+        {% if filter.manufacturers_checked_count %}
+            <a class="filter-alt__clear" data-clear="manufacturers[]"><i class="icon icon-close"></i></a>
+            <div class="filter-alt__num">{{ filter.manufacturers_checked_count }}</div>
+        {% endif %}
+        <div class="select__value">Производитель</div>
+        <input class="select__input" type="checkbox">
+    </div>
+    <div class="select__options">
+        {% for manufacturer in filter.manufacturers %}
+            <label class="checkbox">
+                <input class="checkbox__input" type="checkbox" name="manufacturers[]" value="{{ manufacturer.manufacturer_id }}" {{ manufacturer.checked ? 'checked' : '' }}>
+                <span class="checkbox__mask"></span>
+                <span class="checkbox__label">{{ manufacturer.name }}</span>
+            </label>
+        {% endfor %}
+    </div>
+</div>
+
+{% for attribute in filter.atributy %}
+
+    {% if attribute.type == 'slide' %}
+        {% if attribute.min != attribute.max %}
+            <div class="select _alt _bg _range {{ (attribute.from and attribute.from != attribute.min) or (attribute.to and attribute.to != attribute.max) ? '_filled' : '' }}">
+                <div class="select__main">
+                    {% if attribute.from or attribute.to %}
+                        <a class="filter-alt__clear" data-clear="attr{{ attribute.attribute_id }}_from" data-clear2="attr{{ attribute.attribute_id }}_to"><i class="icon icon-close"></i></a>
+                        <div class="filter-alt__num">{{ attribute.from }} - {{ attribute.to }}</div>
+                    {% endif %}
+                    <div class="select__value">{{ attribute.filter_title|default(attribute.name) }}</div>
+                    <input class="select__input" type="checkbox">
+                </div>
+                <div class="select__options">
+                    <div class="range-double">
+                        <div class="input-interval">
+                            <input class="input _border _mini _range1" type="number" name="attr{{ attribute.attribute_id }}_from" value="{{ attribute.from }}" data-default="{{  attribute.min }}">
+                            <div class="input-interval__separator">—</div>
+                            <input class="input _border _mini _range2" type="number" name="attr{{ attribute.attribute_id }}_to" value="{{ attribute.to }}" data-default="{{  attribute.max }}">
+                        </div>
+                        <input class="input-range" type="text" data-min="{{ attribute.min }}" data-max="{{ attribute.max }}" data-from="{{ attribute.from }}" data-to="{{ attribute.to }}" data-step="1">
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if attribute.type == 'checkboxes' %}
+        <div class="select _alt _bg _multi {{ attribute.selected_count ? '_filled' : '' }}">
+            <div class="select__main">
+                {% if attribute.selected_count %}
+                    <a class="filter-alt__clear" data-clear="attr{{ attribute.attribute_id }}[]"><i class="icon icon-close"></i></a>
+                    <div class="filter-alt__num">{{ attribute.selected_count }}</div>
+                {% endif %}
+                <div class="select__value">{{ attribute.filter_title|default(attribute.name) }}</div>
+                <input class="select__input" type="checkbox">
+            </div>
+            <div class="select__options">
+                {% for value in attribute.values %}
+                <label class="checkbox">
+                    <input class="checkbox__input" type="checkbox" name="attr{{ attribute.attribute_id }}[]" value="{{ value.text }}" {{ value.checked ? 'checked' : ''}}>
+                    <span class="checkbox__mask"></span>
+                    <span class="checkbox__label">{{ value.text }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+{% endfor %}
+
+<a class="btn _fill _large action-main-filter" href="{{ filter.choosed_category_url }}">Показать варианты</a>

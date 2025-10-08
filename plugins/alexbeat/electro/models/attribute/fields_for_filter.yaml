@@ -5,6 +5,14 @@ fields:
     relation: attribute_description
     select: name
     span: auto
+  filter_title:
+    label: Заголовок в фильтре
+    type: text
+    span: auto
+  measure:
+    label: Единица измерения
+    type: text
+    span: auto    
   filter_type_id:
     label: Тип фильтра
     type: dropdown

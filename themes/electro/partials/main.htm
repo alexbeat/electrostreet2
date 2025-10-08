@@ -1,0 +1,343 @@
+==
+<?php
+use Alexbeat\Electro\Models\Category;
+use Alexbeat\Electro\Models\CategoryDescription;
+use Alexbeat\Electro\Models\MainPage;
+use Alexbeat\Electro\Models\BlogPost;
+use Alexbeat\Electro\Models\Product;
+use Alexbeat\Electro\Models\ProductSpecial;
+use Alexbeat\Electro\Models\ProductDiscount;
+use Alexbeat\Electro\Services\MainPageService;
+
+function onStart() {
+    $main_page_service = new MainPageService();
+
+    $model = MainPage::class;
+
+    $data = $model::instance();    
+    $card_categories_items = $data->get('card_categories_items');
+    $card_categories = collect([]);
+    foreach($card_categories_items as $key => $item) {
+        $category = Category::find($item['category']);
+        $card_categories[] = [
+            'title' => CategoryDescription::where('category_id', $item['category'])->first()->name,
+            'image' => $item['image'],
+            'url' => $category->getUrl(),
+            'links' => $category->links()->get(),
+        ];
+    }    
+    $this['card_categories'] = $card_categories;
+
+    $blog_posts = BlogPost::active()->notVideo()->orderBy('date_added', 'desc')->limit(10)->get();
+    $this['blog_posts'] = $blog_posts;
+
+    $customer_group_id = input('customer_group_id');
+
+    $this['new_products'] = Product::active()->new()->orderBy('date_added', 'desc')->limit(10)->get();
+    $this['hit_products'] = Product::active()->hit()->orderBy('date_added', 'desc')->limit(10)->get();
+
+
+    $order_raw = '
+    CASE 
+        WHEN special > 0 THEN (price - special)
+        WHEN special IS NULL AND discount > 0 THEN (price - discount)
+        ELSE 0
+    END DESC
+    ';
+
+    $sale_products = Product::active()
+        ->sale($customer_group_id)
+        ->addSelect([
+            '*',
+            'discount' => ProductDiscount::select('price')
+                ->whereColumn('oc_product_discount.product_id', 'oc_product.product_id')
+                ->where('customer_group_id', $customer_group_id)
+                ->where('quantity', '1')
+                ->whereRaw("((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW()))")
+                ->orderBy('priority', 'ASC')
+                ->orderBy('price', 'ASC')
+                ->limit(1),            
+            'special' => ProductSpecial::select('price')
+                ->whereColumn('oc_product_special.product_id', 'oc_product.product_id')
+                ->where('customer_group_id', $customer_group_id)
+                ->whereRaw("((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW()))")
+                ->orderBy('priority', 'ASC')
+                ->orderBy('price', 'ASC')
+                ->limit(1),
+        ])    
+        ->orderByRaw($order_raw)
+        ->limit(10)
+        ->get();
+
+        $card_atribute_ids = [];
+
+        $sale_products->each(function ($product) use ($card_atribute_ids) {
+            $product->price = $product->discount ? $product->discount : $product->price;// берем региональную цену, если есть
+            
+            $product->skidka = number_format($product->price - $product->special, 0, '', ' ') . ' ₽';
+
+            if (!empty($card_atribute_ids)) {
+                $product->card_attributes = $product->atributy()
+                    ->whereIn('oc_product_attribute.attribute_id', $card_atribute_ids)
+                    ->orderByRaw('FIELD(oc_product_attribute.attribute_id, ' . implode(',', $card_atribute_ids) . ')')
+                    ->get();
+            } else {
+                $product->card_attributes = [];
+            }
+        });
+
+    $this['sale_products'] = $sale_products;
+
+
+
+
+    //ideal_transport
+    $this['ideal_transport_filter_params'] = $main_page_service->getIdealTransportFilterParams();
+
+}
+==
+<div class="index-page bg grid gap-60 pt-30">
+    <section class="inner main-screen" id="main-screen">
+        <div class="swiper-parent main-slider">
+            <div class="swiper _single">
+                <div class="swiper-wrapper">
+                    {% for slide in data.top_banners_items %}
+                        <div class="swiper-slide main-slider__item">
+                            <picture>
+                                <source srcset="{{ slide.image_mobile | media }}" media="(max-width: 767px)">
+                                <img src="{{ slide.image | media }}" alt="{{ slide.title }}">
+                            </picture>
+                            <div class="main-slider__main">
+                                <div class="h0">{{ slide.title }}</div>
+                                <p>{{ slide.subtitle }}</p>
+                                <a class="btn _fill _big" href="{{ slide.button_link }}">{{ slide.button_label }}</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+
+        <div class="mini-banners grid no-notebook">
+            <div class="mini-banner">
+                {% if data.top_banners_block1_link %}
+                    <a class="link-full" href="{{ data.top_banners_block1_link }}"></a>
+                {% endif %}
+                <div class="mini-banner__header">
+                    <h2 class="h1">{{ data.top_banners_block1_title }}</h2><i class="icon {{ data.top_banners_block1_icon_class }}"></i>
+                </div>
+                <p>{{ data.top_banners_block1_subtitle }}</p>
+            </div>
+
+            <div class="mini-banner">
+                {% if data.top_banners_block2_link %}
+                    <a class="link-full" href="{{ data.top_banners_block2_link }}"></a>
+                {% endif %}
+                <div class="mini-banner__header">
+                    <h2 class="h1">{{ data.top_banners_block2_title }}</h2><i class="icon {{ data.top_banners_block2_icon_class }}"></i>
+                </div>
+                <p>{{ data.top_banners_block2_subtitle }}</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="inner" id="picker">
+        <div class="picker">
+            <div class="picker__title">{{ data.ideal_transport_title | formatSpan | raw }}</div>
+            <div class="picker__form">
+                {% partial "main/ideal_transport_filter" ideal_transport_categories=data.ideal_transport_categories filter=ideal_transport_filter_params %}
+            </div>
+            <div class="picker__bg">
+                {% for item in data.ideal_transport_categories %}
+                    <img {{ not loop.index0 ? 'class="_active"' : '' }} src="{{ item.image | media }}" alt="{{ item.title }}">
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="inner categories">
+        {% for category in card_categories %}
+            <div class="category {{ not loop.index0 ? '_main' : '' }}">
+                <div class="category__img">
+                    <img src="{{ category.image | media }}" alt="{{ category.title }}">
+                </div>
+                <a class="{{ not loop.index0 ? 'h1' : 'h2' }}" href="{{ category.url }}">{{ category.title }}</a>
+                <div class="tags {{ not loop.index0 ? '_alt' : '' }}">
+                    {% for link in category.links %}
+                        <a href="{{ link.link }}">{{ link.title }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </section>
+
+    <section class="inner swiper-parent" data-filters>
+        <div class="page-header _no-wrap">
+            <div class="link-tabs mb-20">
+                <label class="link-tab">
+                    <input type="radio" name="products" data-filter-btn="new"><span>Новинки</span>
+                </label>
+                <label class="link-tab">
+                    <input type="radio" name="products" data-filter-btn="sale"><span>Скидки</span>
+                </label>
+                <label class="link-tab">
+                    <input type="radio" name="products" data-filter-btn="hit"><span>Хиты</span>
+                </label>
+            </div>
+            <div class="page-header__links">
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+        </div>
+        <div class="swiper product-slider _4-col">
+            <div class="swiper-wrapper">
+                {% for product in new_products %}
+                    {% partial 'main/product' product=product filter_tab='new' %}
+                {% endfor %}
+                {% for product in hit_products %}
+                    {% partial 'main/product' product=product filter_tab='hit' %}
+                {% endfor %}
+                {% for product in sale_products %}
+                    {% partial 'main/product' product=product filter_tab='sale' %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <div class="brands-line _alt">
+        <div class="brands-line__list inner">
+            {% for item in data.brands_items %}
+                {% if item.link %}
+                    <a href="{{ item.link }}"><img src="{{ item.image | media }}" alt="{{ item.link }}"></a>
+                {% else %}
+                    <a><img src="{{ item.image | media }}" alt="{{ item.link }}"></a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <section class="inner" id="advants">
+        <div class="page-header mb-20">
+            <h2 class="h1">{{ data.details_title }}</h2>
+        </div>
+        <div class="swiper-parent advants-slider">
+            <div class="swiper _mob">
+                <div class="swiper-wrapper">
+                    {% for item in data.details_items %}
+                        <div class="advant swiper-slide"><i class="icon {{ item.icon_class }}"></i>
+                            <div class="h2">{{ item.title }}</div>
+                            <p class="light">{{ item.subtitle }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="swiper-pagination _static"></div>
+        </div>
+    </section>
+
+    <section class="inner">
+        <div class="service">
+            <div class="service__main">
+                <h2 class="h1">{{ data.servicecenter_title }}</h2>
+                <p>{{ data.servicecenter_subtitle }}</p><img src="{{ data.servicecenter_image | media }}" alt="{{ data.servicecenter_title }}">
+            </div>
+            <div class="service__bg">
+                <picture>
+                    <source srcset="{{ data.servicecenter_bg_mobile | media }}" media="(max-width: 767px)"><img src="{{ data.servicecenter_bg | media }}" alt="">
+                </picture>
+                <div class="service__advantes">
+                    {% for item in data.servicecenter_items %}
+                        <div class="mini-advants"><i class="icon {{ item.icon_class }}"></i>
+                            <div class="h2">{{ item.title }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contacts-alt">
+        <iframe src="https://yandex.ru/map-widget/v1/?ll={{ fias_map | swapCoords }}&amp;mode=search&amp;ol=geo&amp;z=16&amp;scroll=false" width="100%" height="270" frameborder="1" allowfullscreen="true"></iframe>
+        <div class="contacts-alt__inner inner">
+            <div class="contacts-alt__main">
+                {% set showroom_title = data.showroom_title | replace('%CITY_PC%',city_pc) %}
+                <h2 class="h1">{{ showroom_title }}</h2>
+                <p>{{ data.showroom_subtitle }}</p>
+                <div class="swiper-parent">
+                    <div class="contacts-alt__slider">
+                        <div class="swiper _single">
+                            <div class="swiper-wrapper">
+                                {% for image in shop_images %}
+                                    <div class="swiper-slide" data-fancybox="contacts" href="{{ image.image | media }}"><img src="{{ image.image | media }}" alt="{{ showroom_title }}"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                    </div>
+                    <div class="swiper-pagination _static"></div>
+                </div>
+                <div class="contacts-alt__list">
+                    <div class="contact"><i class="icon icon-pin"></i>
+                        <p>{{ fias_adres }}</p>
+                    </div>
+                    <div class="contact"><i class="icon icon-time2"></i>
+                        <p>{{ fias_open }}</p>
+                    </div>
+                    <div class="social _auto _left">
+                        <a href="{{ fias_telegram }}"><img src="img/tg.svg" alt="{{ data.showroom_subtitle }}"></a>
+                        <a href="{{ fias_whatsapp }}"><img src="img/wa.svg" alt="{{ data.showroom_subtitle }}"><span>*</span></a>
+                        <a href="{{ fias_max }}"><img src="img/max.svg" alt="{{ data.showroom_subtitle }}"></a>
+                        <a href="tel:{{ fias_phone_main }}"><img src="img/call2.svg" alt="{{ data.showroom_subtitle }}"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="inner swiper-parent">
+        <div class="page-header _no-wrap mb-20">
+            <h2 class="h1">Блог</h2>
+            <div class="page-header__links"><a class="link-line" href="/blog/">Все статьи</a>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+        </div>
+        <div class="swiper _2-col news-slider">
+            <div class="swiper-wrapper">
+                {% for post in blog_posts %}
+                    <div class="swiper-slide">
+                        <div class="news">
+                            <a class="link-full" href="{{ post.url }}"></a>
+                            <img src="{{ post.image | media }}" alt="{{ post.title }}">
+                            <div class="news__main"><b>{{ post.title }}</b>
+                                <div class="news__infos">
+                                    <div class="news__info"><i class="icon icon-eye"></i><span>{{ post.count_read }}</span></div>
+                                    <div class="news__info"><i class="icon icon-calendar2"></i><span>{{ post.date_added | formatDate }}</span></div>
+                                </div>
+                                <div class="news__text">
+                                    <p>{{ post.short_description }}</p>
+                                </div><a class="link-arrow" href="{{ post.url }}"><span>Читать полностью</span><i class="icon icon-long-arrow"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="swiper-pagination _static _mob"></div>
+    </section>
+
+    <section class="inner franchise">
+        <div class="franchise__main">
+            <h2 class="h1">{{ data.franchise_title }}</h2>
+            <div class="text">
+                {{ data.franchise_subtitle | raw }}
+            </div>
+            {% if data.franchise_link %}
+                <a class="link-arrow _big" href="{{ data.franchise_link }}">{{ data.franchise_link_title }}<i class="icon icon-long-arrow"></i></a>
+            {% endif %}
+        </div>
+        <img src="{{ data.franchise_image | media }}" alt="{{ data.franchise_title }}">
+    </section>
+</div>

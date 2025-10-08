@@ -26,6 +26,8 @@ class Plugin extends PluginBase
         \Route::post('/api/catalog/list', 'Alexbeat\Electro\Classes\CatalogController@list');
         \Route::post('/api/faq/list', 'Alexbeat\Electro\Classes\FaqController@list');
         \Route::post('/api/page/legals', 'Alexbeat\Electro\Classes\PageController@legals');
+        \Route::any('/api/page/main/filter', 'Alexbeat\Electro\Classes\PageController@mainFilter');
+        \Route::any('/api/page/main', 'Alexbeat\Electro\Classes\PageController@main');
         new HelperService();
     }
 
@@ -46,12 +48,20 @@ class Plugin extends PluginBase
     public function registerSettings()
     {
         return [
+            'mainpage' => [
+                'label' => 'Главная страница',
+                'description' => 'Главная страница',
+                'category' => 'Electro',
+                'icon' => 'icon-cog',
+                'order' => 10,
+                'class' => \Alexbeat\Electro\Models\MainPage::class,
+            ],
             'faq' => [
                 'label' => 'Вопросы-ответы',
                 'description' => 'Вопросы-ответы',
                 'category' => 'Electro',
                 'icon' => 'icon-cog',
-                'order' => 10,
+                'order' => 20,
                 'class' => \Alexbeat\Electro\Models\Faq::class,
             ],
             'legalspage' => [
@@ -59,9 +69,9 @@ class Plugin extends PluginBase
                 'description' => 'Юридическим лицам',
                 'category' => 'Electro',
                 'icon' => 'icon-cog',
-                'order' => 20,
+                'order' => 30,
                 'class' => \Alexbeat\Electro\Models\LegalsPage::class,
-            ]            
+            ],
         ];
     }
 
@@ -85,6 +95,10 @@ class Plugin extends PluginBase
                     return HelperService::formatVideoUrl($url);
                 },
 
+                'formatDate' => function ($date) {
+                    return date('d.m.Y', strtotime($date));
+                },
+
                 'print_r' => function ($array) {
                     return print_r($array, 1);
                 },
@@ -94,6 +108,16 @@ class Plugin extends PluginBase
                     $result = str_replace('>>>', '</span>', $result);
                     return $result;
                 },
+
+                'replace' => function ($string, $from, $to) {
+                    return str_replace($from, $to, $string);
+                },
+
+                'swapCoords' => function ($string) {
+                    $coords = explode(',', str_replace(' ', '', $string));
+                    if (!isset($coords[1])) return $string;
+                    return $coords[1] . ',' . $coords[0];
+                }
             ]
         ];
     }
