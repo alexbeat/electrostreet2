@@ -4,22 +4,20 @@ use Backend;
 use BackendMenu;
 use Backend\Classes\Controller;
 
-class Products extends Controller
+class CustomerGroups extends Controller
 {
     public $implement = [
         \Backend\Behaviors\FormController::class,
-        \Backend\Behaviors\ListController::class,
-        \Backend\Behaviors\RelationController::class
+        \Backend\Behaviors\ListController::class
     ];
 
     public $formConfig = 'config_form.yaml';
     public $listConfig = 'config_list.yaml';
-    public $relationConfig = 'config_relation.yaml';
 
     public function __construct()
     {
         parent::__construct();
-        BackendMenu::setContext('Alexbeat.Electro', 'electro-catalog', 'electro-products');
+        BackendMenu::setContext('Alexbeat.Electro', 'electro-catalog', 'electro-customergroups');
     }
 
 }

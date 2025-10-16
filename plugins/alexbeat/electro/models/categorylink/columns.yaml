@@ -1,10 +1,10 @@
 columns:
-  category:
-    label: Категория
-    relation: category
-    select: id
-    sortable: true
-    searchable: true
+  # category:
+  #   label: Категория
+  #   relation: category
+  #   select: id
+  #   sortable: true
+  #   searchable: true
   title:
     label: Заголовок
     sortable: true

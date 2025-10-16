@@ -152,10 +152,12 @@ class CatalogController extends Controller
         $order_raw = 'quantity > 0 DESC';
 
         if ($sort == 'best_discount') {
-            $order_raw .= ', 
+            $order_raw .= ',
             CASE 
-                WHEN special > 0 THEN (price - special)
-                WHEN special IS NULL AND discount > 0 THEN (price - discount)
+                -- Если и special, и discount есть, и special меньше discount, special товаров вперед
+                WHEN special > 0 AND discount > 0 AND special < discount THEN 1
+                -- Если только special есть, то оцениваем special - price, и если больше 0, то товары вперед
+                WHEN special > 0 AND discount IS NULL AND (price - special) > 0 THEN 1
                 ELSE 0
             END DESC
             ';

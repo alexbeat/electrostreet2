@@ -1,0 +1,19 @@
+product_specials:
+  label: Скидки
+  recordsPerPage: 10
+  view:
+    list: $/alexbeat/electro/models/productspecial/columns.yaml
+    toolbarButtons: create|delete
+  manage:
+    form: $/alexbeat/electro/models/productspecial/fields.yaml
+    list: $/alexbeat/electro/models/productspecial/columns.yaml
+
+product_discounts:
+  label: Региональные цены
+  recordsPerPage: 10
+  view:
+    list: $/alexbeat/electro/models/productdiscount/columns.yaml
+    toolbarButtons: create|delete
+  manage:
+    form: $/alexbeat/electro/models/productdiscount/fields.yaml
+    list: $/alexbeat/electro/models/productdiscount/columns.yaml

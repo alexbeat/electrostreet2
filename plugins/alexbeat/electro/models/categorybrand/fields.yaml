@@ -1,9 +1,4 @@
 fields:
-  category:
-    label: Категория
-    type: relation
-    relation: category
-    span: auto
   link:
     label: Ссылка
     type: text
@@ -16,4 +11,5 @@ fields:
   sort_order:
     label: Порядок
     type: number
+    default: 500
     span: auto

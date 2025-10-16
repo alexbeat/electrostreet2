@@ -1,0 +1,7 @@
+columns:
+  customer_group_description[name]:
+    label: Название
+  customer_group_description[description]:
+    label: Описание
+  sort_order:
+    label: Порядок

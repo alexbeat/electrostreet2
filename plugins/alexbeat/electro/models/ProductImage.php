@@ -22,6 +22,6 @@ class ProductImage extends Model
 
     public function getThumbAttribute()
     {
-        return ResizeImages::resize(\Storage::disk('media')->url($this->image), 200, 200, ['mode' => 'crop']);
+        return ResizeImages::resize(\Storage::disk('media')->url($this->image), 250, 250, ['mode' => 'fit']);
     }    
 }

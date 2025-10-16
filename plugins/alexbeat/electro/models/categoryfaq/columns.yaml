@@ -1,10 +1,4 @@
 columns:
-  category:
-    label: Категория
-    relation: category
-    select: id
-    sortable: true
-    searchable: true
   question:
     label: Вопрос
     sortable: true

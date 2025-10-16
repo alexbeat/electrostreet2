@@ -1,0 +1,16 @@
+fields:
+  customer_group:
+    label: Группа покупателей
+    type: relation
+    relation: customer_group
+    select: (select name from oc_customer_group_description where oc_customer_group_description.customer_group_id = oc_customer_group.customer_group_id order by name)
+  price:
+    label: Цена со скидкой
+  date_start:
+    label: Дата начала
+  date_end:
+    label: Дата окончания
+  quantity:
+    label: Кол-во          
+  priority:
+    label: Приоритет    

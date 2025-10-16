@@ -8,4 +8,11 @@ class ProductDiscount extends Model
     public $primaryKey = 'product_discount_id';
     public $timestamps = false;
 
+    public $belongsTo = [
+        'customer_group' => [
+            CustomerGroup::class, 
+            // 'order' => 'name asc',
+        ],
+    ];
+
 }

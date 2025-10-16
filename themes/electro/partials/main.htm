@@ -28,13 +28,13 @@ function onStart() {
     }    
     $this['card_categories'] = $card_categories;
 
-    $blog_posts = BlogPost::active()->notVideo()->orderBy('date_added', 'desc')->limit(10)->get();
+    $blog_posts = BlogPost::active()->notVideo()->orderBy('date_added', 'desc')->limit(15)->get();
     $this['blog_posts'] = $blog_posts;
 
     $customer_group_id = input('customer_group_id');
 
-    $this['new_products'] = Product::active()->new()->orderBy('date_added', 'desc')->limit(10)->get();
-    $this['hit_products'] = Product::active()->hit()->orderBy('date_added', 'desc')->limit(10)->get();
+    $this['new_products'] = Product::active()->new()->orderBy('date_added', 'desc')->limit(15)->get();
+    $this['hit_products'] = Product::active()->hit()->orderBy('date_added', 'desc')->limit(15)->get();
 
 
     $order_raw = '
@@ -102,7 +102,7 @@ function onStart() {
             <div class="swiper _single">
                 <div class="swiper-wrapper">
                     {% for slide in data.top_banners_items %}
-                        <div class="swiper-slide main-slider__item">
+                        <div class="swiper-slide main-slider__item {{ slide.slide_class }}">
                             <picture>
                                 <source srcset="{{ slide.image_mobile | media }}" media="(max-width: 767px)">
                                 <img src="{{ slide.image | media }}" alt="{{ slide.title }}">
@@ -116,7 +116,7 @@ function onStart() {
                     {% endfor %}
                 </div>
             </div>
-            <div class="swiper-pagination"></div>
+            <div class="swiper-pagination {{data.top_banners_items|length == 1 ? 'style="display:none!important"' : ''}}"></div>
         </div>
 
         <div class="mini-banners grid no-notebook">
@@ -158,7 +158,7 @@ function onStart() {
 
     <section class="inner categories">
         {% for category in card_categories %}
-            <div class="category {{ not loop.index0 ? '_main' : '' }}">
+            <div class="category {{ not loop.index0 ? '_main' : '' }} {{ not category.links|length ? '_no-tags' : '' }}">
                 <div class="category__img">
                     <img src="{{ category.image | media }}" alt="{{ category.title }}">
                 </div>
@@ -258,7 +258,40 @@ function onStart() {
     </section>
 
     <section class="contacts-alt">
+        {#
         <iframe src="https://yandex.ru/map-widget/v1/?ll={{ fias_map | swapCoords }}&amp;mode=search&amp;ol=geo&amp;z=16&amp;scroll=false" width="100%" height="270" frameborder="1" allowfullscreen="true"></iframe>
+        #}
+
+        <div id="map"></div>
+
+        <script>
+            let coords = [{{ fias_map | swapCoords }}]
+        </script>
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/@babel/standalone@7/babel.min.js"></script>
+        <script src="https://api-maps.yandex.ru/v3/?apikey=1b3b30d1-0ab0-4675-ba24-d0e534763ba0&lang=ru_RU"></script>
+        <script src="/assets/js/main-map.js"></script>
+        <style>
+        .map-marker {
+            width: 147px;
+            height: 50px;
+            background-image: url(https://electrostreet.ru/img/icons/logo.svg);
+            background-size: contain;
+            background-repeat: no-repeat;
+            position: relative;
+            margin-left: 15px;
+        }
+        .map-marker:before {
+            content: " ";
+            background: red;
+            width: 15px;
+            height: 15px;
+            display: block;
+            border-radius: 100%;
+            left: -20px;
+            position: absolute;
+        }        
+        </style>
+        
         <div class="contacts-alt__inner inner">
             <div class="contacts-alt__main">
                 {% set showroom_title = data.showroom_title | replace('%CITY_PC%',city_pc) %}

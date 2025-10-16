@@ -1,6 +1,6 @@
 list: $/alexbeat/electro/models/product/columns.yaml
 modelClass: Alexbeat\Electro\Models\Product
-title: Products
+title: Товары
 noRecordsMessage: 'backend::lang.list.no_records'
 showSetup: true
 showCheckboxes: true

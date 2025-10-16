@@ -38,8 +38,15 @@ class Product extends Model
         'images' => ['Alexbeat\Electro\Models\ProductImage', 'key' => 'product_id', 'otherKey' => 'product_id'],
         'product_to_store' => ['Alexbeat\Electro\Models\ProductToStore', 'key' => 'product_id', 'otherKey' => 'product_id'],
         'product_discount' => ['Alexbeat\Electro\Models\ProductDiscount', 'key' => 'product_id',],
+        'product_discounts' => ['Alexbeat\Electro\Models\ProductDiscount', 'key' => 'product_id',],
         'product_specials' => [
             'Alexbeat\Electro\Models\ProductSpecial', 'key' => 'product_id',
+        ],
+    ];
+
+    public $belongsTo = [
+        'manufacturer' => [
+            Manufacturer::class, 'order' => 'name asc',
         ],
     ];
 
@@ -72,7 +79,7 @@ class Product extends Model
 
     public function getThumbAttribute()
     {
-        return ResizeImages::resize(\Storage::disk('media')->url($this->image), 200, 200, ['mode' => 'fit']);
+        return ResizeImages::resize(\Storage::disk('media')->url($this->image), 250, 250, ['mode' => 'fit']);
     }
 
     public function getNameAttribute()

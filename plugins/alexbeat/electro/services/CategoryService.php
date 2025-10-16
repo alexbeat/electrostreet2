@@ -30,7 +30,7 @@ class CategoryService
         $filter_params_count = 0;
 
         if (!$products_query) {
-            $products_query = Product::inCategories([(int)$category->category_id]);
+            $products_query = Product::active()->inCategories([(int)$category->category_id]);
         }
 
         $productIds = $products_query->get()->pluck('product_id');

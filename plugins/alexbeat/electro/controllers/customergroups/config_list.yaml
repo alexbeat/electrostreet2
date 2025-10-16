@@ -1,0 +1,15 @@
+title: 'Группы покупателей'
+modelClass: Alexbeat\Electro\Models\CustomerGroup
+list: $/alexbeat/electro/models/customergroup/columns.yaml
+recordUrl: 'alexbeat/electro/customergroups/update/:customer_group_id'
+noRecordsMessage: 'backend::lang.list.no_records'
+recordsPerPage: 20
+showSetup: true
+showCheckboxes: true
+defaultSort:
+    column: customer_group_id
+    direction: asc
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'

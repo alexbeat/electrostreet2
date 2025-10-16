@@ -1,0 +1,8 @@
+fields:
+  customer_group_description[name]:
+    label: Название
+  customer_group_description[description]:
+    label: Описание
+    type: textarea
+  sort_order:
+    label: Порядок

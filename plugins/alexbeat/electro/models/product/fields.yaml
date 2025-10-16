@@ -1,20 +1,22 @@
 tabs:
   fields:
-    # product_id:
-    #     label: ID
-    #     tab: Основное
+    description[name]:
+      label: Название
+      span: full
+      tab: Основное
 
     status:
-      label: Статус
+      label: Активен
       type: switch
       span: auto
       tab: Основное
 
-    # name:
-    #     label: Название
-    #     relation: description
-    #     select: name
-    #     tab: Основное
+    hit:
+      label: Популярный
+      type: switch
+      span: auto
+      tab: Основное
+
 
     model:
       label: Модель
@@ -26,36 +28,18 @@ tabs:
       span: auto
       tab: Основное
 
-    quantity:
-      label: Количество
-      span: auto
-      tab: Основное
-
-    stock_status_id:
-      label: Статус наличия
-      span: auto
-      tab: Основное
-
     image:
       label: Изображение
       type: mediafinder
       mode: image
-      span: auto
+      span: full
       tab: Основное
 
-    manufacturer_id:
+    manufacturer:
       label: Производитель
-      span: auto
-      tab: Основное
-
-    price:
-      label: Цена
-      span: auto
-      tab: Основное
-
-    hit:
-      label: Популярность
-      type: switch
+      type: relation
+      relation: manufacturer
+      nameFrom: name
       span: auto
       tab: Основное
 
@@ -63,3 +47,33 @@ tabs:
       label: Рейтинг
       span: auto
       tab: Основное
+
+    price:
+      label: Цена
+      type: number
+      span: auto
+      tab: Цены и наличие
+
+    quantity:
+      label: Количество
+      type: number
+      span: auto
+      tab: Цены и наличие
+
+    stock_status_id:
+      label: Статус наличия
+      type: number
+      span: auto
+      tab: Цены и наличие
+
+    product_discounts:
+      label: Региональные цены
+      type: relation
+      span: full
+      tab: Цены и наличие
+
+    product_specials:
+      label: Цены со скидкой
+      type: relation
+      span: full
+      tab: Цены и наличие

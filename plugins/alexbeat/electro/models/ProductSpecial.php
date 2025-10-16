@@ -7,4 +7,11 @@ class ProductSpecial extends Model
     public $table = 'oc_product_special';
     public $primaryKey = 'product_special_id';
     public $timestamps = false;
+
+    public $belongsTo = [
+        'customer_group' => [
+            CustomerGroup::class, 
+            // 'order' => 'name asc',
+        ],
+    ];
 }

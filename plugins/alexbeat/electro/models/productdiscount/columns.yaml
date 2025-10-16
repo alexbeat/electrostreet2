@@ -1,0 +1,14 @@
+columns:
+  customer_group_description[name]:
+    label: Группа покупателей
+    relation: customer_group
+  price:
+    label: Цена со скидкой
+  date_start:
+    label: Дата начала
+  date_end:
+    label: Дата окончания
+  quantity:
+    label: Кол-во        
+  priority:
+    label: Приоритет    

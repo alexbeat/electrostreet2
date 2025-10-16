@@ -2,17 +2,18 @@ fields:
   title:
     label: Заголовок
     type: text
-    span: full
+    span: auto
   link:
     label: Ссылка
-    type: textarea
-    span: full
-  category:
-    label: Категория
-    type: relation
-    relation: category
-    span: auto    
+    type: text
+    span: auto
+  # category:
+  #   label: Категория
+  #   type: relation
+  #   relation: category
+  #   span: auto    
   sort_order:
     label: Порядок
     type: number
+    default: 500
     span: auto

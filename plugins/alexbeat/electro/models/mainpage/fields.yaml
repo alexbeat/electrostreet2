@@ -21,6 +21,14 @@ fields:
           label: Заголовок
           type: text
           span: auto
+        slide_class:
+          label: Класс блока слайда
+          type: text
+          span: auto
+          comment: "— ._alt контент без подложки слева, цвет текста черный
+            — ._color-w цвет текста белый
+            — ._mob-color-w цвет текста в мобиле белый
+            — ._mob-color-b цвет текста в мобиле черный"
         subtitle:
           label: Текст под заголовком
           type: textarea

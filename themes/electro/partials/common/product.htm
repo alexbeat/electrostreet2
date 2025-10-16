@@ -26,13 +26,13 @@
             <div class="swiper-wrapper">
                 <div class="swiper-slide">
                     <a href="{{ product.href }}">
-                        <img src="{{ product.thumb }}" alt="{{ product.name }}">
+                        <img src="{{ product.thumb }}" alt="{{ product.name }}" loading="lazy">
                     </a>
                 </div>
                 {% for image in product.limited_images %}
                 <div class="swiper-slide">
                     <a href="{{ product.href }}">
-                        <img src="{{ image.thumb }}" alt="{{ product.name }}">
+                        <img src="{{ image.thumb }}" alt="{{ product.name }}" loading="lazy">
                     </a>
                 </div>
                 {% endfor %}

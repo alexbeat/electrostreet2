@@ -1,0 +1,13 @@
+name: 'Группы покупателей'
+modelClass: Alexbeat\Electro\Models\CustomerGroup
+form: $/alexbeat/electro/models/customergroup/fields.yaml
+defaultRedirect: alexbeat/electro/customergroups
+create:
+    title: Создать
+    redirect: 'alexbeat/electro/customergroups/update/:customer_group_id'
+    redirectClose: alexbeat/electro/customergroups
+update:
+    title: Изменить
+    redirect: alexbeat/electro/customergroups
+    redirectClose: alexbeat/electro/customergroups
+preview: {  }
