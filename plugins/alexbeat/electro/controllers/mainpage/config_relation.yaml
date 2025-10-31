@@ -1,0 +1,9 @@
+# sale_products:
+#   label: Товары со скидкой
+#   recordsPerPage: 10
+#   view:
+#     list: $/alexbeat/electro/models/product/columns_simple.yaml
+#     toolbarButtons: add|remove
+#   manage:
+#     form: $/alexbeat/electro/models/product/fields.yaml
+#     list: $/alexbeat/electro/models/product/columns_simple.yaml

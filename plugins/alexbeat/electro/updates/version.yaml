@@ -27,3 +27,6 @@ v1.0.9:
 v1.0.10:
     - 'Updated table alexbeat_electro_main_page'
     - builder_table_update_alexbeat_electro_main_page_6.php
+v1.0.11:
+    - 'Created table alexbeat_electro_main_page_sale_products'
+    - builder_table_create_alexbeat_electro_main_page_sale_products.php

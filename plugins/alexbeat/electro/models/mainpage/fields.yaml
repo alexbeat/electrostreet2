@@ -128,6 +128,28 @@ fields:
           mode: image
           span: auto
 
+  _section_sale:
+    label: Товары со скидкой
+    type: section
+
+  sale_products:
+    label: "Товары со скидкой"
+    # type: relation
+    # type: taglist
+    # nameFrom: product_id
+    # options: getProductOptions
+    # useKey: true
+
+    # options: getProductOptions
+    span: full
+    type: repeater
+    form:
+      fields:
+        product:
+          label: Товар
+          type: dropdown
+          span: auto
+
   _section_brands:
     label: Бренды
     type: section
