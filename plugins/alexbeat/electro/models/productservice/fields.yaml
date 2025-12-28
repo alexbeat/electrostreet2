@@ -1,0 +1,17 @@
+fields:
+    # product_id:
+    #     label: 'Product id'
+    #     span: auto
+    #     type: number
+    service_product:
+        label: Товар-услуга
+        span: auto
+        type: relation
+        relation: service_product
+    customer_group_description:
+        label: Группа покупателей
+        span: auto
+        type: relation
+        relation: customer_group_description
+        emptyOption: -- Для всех --
+        # nameFrom: customer_group_id

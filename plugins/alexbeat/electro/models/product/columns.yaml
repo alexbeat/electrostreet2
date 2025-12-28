@@ -14,7 +14,11 @@ columns:
         height: 100
         options:
             mode: crop
-            quality: 90                
+            quality: 90 
+    is_service:
+        label: Является услугой
+        type: switch
+        sortable: true                           
     name:
         label: Название
         relation: description

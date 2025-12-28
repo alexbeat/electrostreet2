@@ -1,0 +1,15 @@
+title: 'Группы атрибутов'
+modelClass: Alexbeat\Electro\Models\AttributeGroup
+list: $/alexbeat/electro/models/attributegroup/columns.yaml
+recordUrl: 'alexbeat/electro/attributegroups/update/:attribute_group_id'
+noRecordsMessage: 'backend::lang.list.no_records'
+recordsPerPage: 20
+showSetup: true
+showCheckboxes: true
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'
+structure:
+    showTree: false
+    showReorder: true

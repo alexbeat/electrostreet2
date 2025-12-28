@@ -11,6 +11,12 @@ scopes:
             - status <> 1
             - status = 1
     
+    is_service:
+        label: 'Является услугой'
+        type: switch
+        conditions:
+            - is_service <> 1
+            - is_service = 1    
     # name:
     #     label: 'Название'
     #     type: text

@@ -1,0 +1,23 @@
+columns:
+    attribute_group_id:
+        label: №
+        type: number
+        sortable: true
+    description[name]:
+        label: Название
+        type: text
+        sortable: true
+        searchable: true
+    show_in_product:
+        label: Выводить в товаре
+        type: switch
+        sortable: true
+    group_attributes:
+        label: Атрибутов
+        type: number
+        relation: group_attributes
+        relationCount: true        
+    sort_order:
+        label: Порядок
+        type: number
+        sortable: true

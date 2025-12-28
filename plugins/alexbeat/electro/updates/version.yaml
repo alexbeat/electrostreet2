@@ -30,3 +30,12 @@ v1.0.10:
 v1.0.11:
     - 'Created table alexbeat_electro_main_page_sale_products'
     - builder_table_create_alexbeat_electro_main_page_sale_products.php
+v1.0.12:
+    - 'Created table alexbeat_electro_products_services'
+    - builder_table_create_alexbeat_electro_products_services.php
+v1.0.13:
+    - 'Created table alexbeat_electro_category_product_services'
+    - builder_table_create_alexbeat_electro_category_product_services.php
+v1.0.14:
+    - 'Updated table alexbeat_electro_category_product_services'
+    - builder_table_update_alexbeat_electro_category_product_services.php

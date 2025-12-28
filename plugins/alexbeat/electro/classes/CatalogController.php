@@ -40,7 +40,7 @@ class CatalogController extends Controller
         //get all children and itself of category
         // $category_ids = Category::where('parent_id', $category_id)->orWhere('category_id', $category_id)->pluck('category_id')->toArray();
 
-        $products_query = Product::active()->with(['description', 'atributy'])
+        $products_query = Product::active()->notService()->with(['description', 'atributy'])
             ->whereHas('product_to_store', function ($query) use ($store_id) {
                 $query->where('store_id', $store_id);
             })

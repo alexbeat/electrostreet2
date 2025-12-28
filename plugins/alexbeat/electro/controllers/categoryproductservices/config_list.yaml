@@ -1,0 +1,12 @@
+list: $/alexbeat/electro/models/categoryproductservice/columns.yaml
+modelClass: Alexbeat\Electro\Models\CategoryProductService
+title: Допуслуги товаров категории
+noRecordsMessage: 'backend::lang.list.no_records'
+showSetup: true
+showCheckboxes: true
+recordsPerPage: 20
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'
+recordUrl: 'alexbeat/electro/categoryproductservices/update/:id'

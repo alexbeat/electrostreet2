@@ -5,7 +5,7 @@ use Model;
 class AttributeGroupDescription extends Model
 {
     public $table = 'oc_attribute_group_description';
-    public $primaryKey = null;
+    public $primaryKey = 'attribute_group_id';
     public $timestamps = false;
     public $incrementing = false;
 
@@ -15,4 +15,6 @@ class AttributeGroupDescription extends Model
             'key' => 'attribute_group_id'
         ]
     ];
+
+    public $fillable = ['attribute_group_id', 'language_id', 'name'];
 }

@@ -17,10 +17,15 @@ tabs:
       span: auto
       tab: Основное
 
+    is_service:
+      label: Является услугой
+      type: switch
+      span: auto
+      tab: Основное
 
     model:
       label: Модель
-      span: auto
+      span: left
       tab: Основное
 
     sku:
@@ -46,6 +51,25 @@ tabs:
     rating:
       label: Рейтинг
       span: auto
+      tab: Основное
+
+    product_description[description]:
+      label: Описание
+      span: full
+      type: richeditor
+      tab: Основное
+
+    product_description[tag]:
+      label: Теги
+      span: full
+      type: text
+      tab: Основное   
+
+    popup_description:
+      label: Описание для попапа (только для товаров-услуг)
+      span: full
+      type: textarea
+      size: small
       tab: Основное
 
     price:
@@ -77,3 +101,42 @@ tabs:
       type: relation
       span: full
       tab: Цены и наличие
+
+    product_attributes:
+      label: Атрибуты товара
+      type: relation
+      span: full
+      tab: Атрибуты товара
+
+    services:
+      label: Допуслуги товара
+      type: relation
+      span: full
+      tab: Допуслуги     
+
+
+
+
+    product_description[meta_h1]:
+      label: H1
+      span: full
+      type: text
+      tab: SEO
+
+    product_description[meta_title]:
+      label: Заголовок в браузере
+      span: full
+      type: text
+      tab: SEO
+
+    product_description[meta_description]:
+      label: Метаописание
+      span: full
+      type: textarea
+      tab: SEO      
+
+    product_description[meta_keyword]:
+      label: Ключевые слова
+      span: full
+      type: text
+      tab: SEO           

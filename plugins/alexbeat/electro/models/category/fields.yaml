@@ -19,6 +19,7 @@ tabs:
       type: relation
       relation: categories
       span: auto
+      emptyOption: -- Корневая категория --
       tab: Основное
 
     status:
@@ -208,3 +209,8 @@ tabs:
       span: auto
       tab: Тех.данные
 
+    services:
+      label: Допуслуги товаров категории
+      type: relation
+      span: full
+      tab: Допуслуги     

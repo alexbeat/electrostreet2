@@ -1,0 +1,26 @@
+fields:
+  description[name]:
+    label: Название
+    span: auto
+    type: text
+  sort_order:
+    label: Порядок
+    span: auto
+    default: 500
+    type: number
+  description[language_id]:
+    label: Язык
+    type: number
+    default: 1
+    hidden: 1
+    span: auto
+  show_in_product:
+    label: Выводить в товаре
+    type: switch
+    default: 1
+    span: auto
+  group_attributes:
+    label: Атрибуты
+    type: relation
+    relation: group_attributes
+    span: full

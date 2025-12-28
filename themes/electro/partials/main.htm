@@ -33,8 +33,8 @@ function onStart() {
 
     $customer_group_id = input('customer_group_id');
 
-    $this['new_products'] = Product::active()->new()->orderBy('date_added', 'desc')->limit(15)->get();
-    $this['hit_products'] = Product::active()->hit()->orderBy('date_added', 'desc')->limit(15)->get();
+    $this['new_products'] = Product::active()->notService()->new()->orderBy('date_added', 'desc')->limit(15)->get();
+    $this['hit_products'] = Product::active()->notService()->hit()->orderBy('date_added', 'desc')->limit(15)->get();
 
 
     $order_raw = '
@@ -46,6 +46,7 @@ function onStart() {
     ';
 
     $sale_products = Product::active()
+        ->notService()
         ->sale($customer_group_id)
         ->addSelect([
             '*',

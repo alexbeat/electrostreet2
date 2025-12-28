@@ -75,3 +75,13 @@ links:
     form: $/alexbeat/electro/models/categorylink/fields.yaml
     list: $/alexbeat/electro/models/categorylink/columns.yaml
     recordsPerPage: 20
+
+services:
+  label: Допуслуги товаров категории
+  recordsPerPage: 10
+  view:
+    list: $/alexbeat/electro/models/categoryproductservice/columns.yaml
+    toolbarButtons: create|delete
+  manage:
+    form: $/alexbeat/electro/models/categoryproductservice/fields.yaml
+    list: $/alexbeat/electro/models/categoryproductservice/columns.yaml    

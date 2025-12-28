@@ -37,7 +37,7 @@ class Attribute extends Model
                 'sort_order',
                 'show_in_card',
             ],
-        ]
+        ],
     ];
 
     public function getNameAttribute() {

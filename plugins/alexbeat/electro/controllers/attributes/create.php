@@ -1,6 +1,6 @@
 <?php Block::put('breadcrumb') ?>
     <ul>
-        <li><a href="<?= Backend::url('alexbeat/electro/attributes') ?>">Attributes</a></li>
+        <li><a href="<?= Backend::url('alexbeat/electro/attributes') ?>">Атрибуты</a></li>
         <li><?= e($this->pageTitle) ?></li>
     </ul>
 <?php Block::endPut() ?>

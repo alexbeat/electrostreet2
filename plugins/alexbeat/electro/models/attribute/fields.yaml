@@ -38,3 +38,7 @@ fields:
     label: Сортировка
     type: number
     span: auto
+  popup_description:
+    label: Описание для попапа
+    type: textarea
+    span: full

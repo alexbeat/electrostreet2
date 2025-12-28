@@ -1,0 +1,33 @@
+columns:
+    id:
+        label: №
+        type: number
+        sortable: true
+    # category_id:
+    #     label: category_id
+    #     type: number
+    #     searchable: true
+    #     sortable: true
+    service_product:
+        label: Товар-услуга
+        relation: service_product
+        select: name
+        searchable: true
+        sortable: true
+    _service_product_link:
+        label: Ссылка
+        type: linkage
+        linkText: К услуге
+        linkUrl: alexbeat/electro/products/update/:service_product_id      
+        attributes:
+            target: _blank           
+    customer_group_description:
+        label: Группа покупателей
+        relation: customer_group_description
+        select: name
+        searchable: true
+        sortable: true
+    _service_product_price:
+        label: Цена услуги с учетом группы и даты
+        type: partial
+        path: $/alexbeat/electro/partials/_service_product_price.php

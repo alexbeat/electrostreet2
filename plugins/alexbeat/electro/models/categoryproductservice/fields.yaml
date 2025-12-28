@@ -1,0 +1,22 @@
+fields:
+    # category_id:
+    #     label: 'category_id'
+    #     span: auto
+    #     type: number
+    service_product:
+        label: Товар-услуга
+        span: auto
+        type: relation
+        relation: service_product
+    # _service_product_link:
+    #     label: View
+    #     type: linkage
+    #     linkText: К услуге
+    #     linkUrl: backend/alexbeat/electro/product/update/:id
+    customer_group_description:
+        label: Группа покупателей
+        span: auto
+        type: relation
+        relation: customer_group_description
+        emptyOption: -- Для всех --
+        # nameFrom: customer_group_id

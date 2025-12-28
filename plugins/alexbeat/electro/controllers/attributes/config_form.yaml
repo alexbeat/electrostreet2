@@ -5,6 +5,8 @@ defaultRedirect: alexbeat/electro/attributes
 create:
     redirect: 'alexbeat/electro/attributes/update/:attribute_id'
     redirectClose: alexbeat/electro/attributes
+    title: Создать
 update:
     redirect: alexbeat/electro/attributes
     redirectClose: alexbeat/electro/attributes
+    title: Изменить

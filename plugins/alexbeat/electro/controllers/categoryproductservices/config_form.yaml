@@ -1,0 +1,10 @@
+name: Допуслуги товаров категории
+form: $/alexbeat/electro/models/categoryproductservice/fields.yaml
+modelClass: Alexbeat\Electro\Models\CategoryProductService
+defaultRedirect: alexbeat/electro/categoryproductservices
+create:
+    redirect: 'alexbeat/electro/categoryproductservices/update/:id'
+    redirectClose: alexbeat/electro/categoryproductservices
+update:
+    redirect: alexbeat/electro/categoryproductservices
+    redirectClose: alexbeat/electro/categoryproductservices

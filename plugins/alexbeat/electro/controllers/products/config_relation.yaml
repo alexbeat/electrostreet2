@@ -17,3 +17,23 @@ product_discounts:
   manage:
     form: $/alexbeat/electro/models/productdiscount/fields.yaml
     list: $/alexbeat/electro/models/productdiscount/columns.yaml
+
+product_attributes:
+  label: Атрибуты товара
+  recordsPerPage: 10
+  view:
+    list: $/alexbeat/electro/models/productattribute/columns.yaml
+    toolbarButtons: create|delete
+  manage:
+    form: $/alexbeat/electro/models/productattribute/fields.yaml
+    list: $/alexbeat/electro/models/productattribute/columns.yaml
+
+services:
+  label: Допуслуги
+  recordsPerPage: 10
+  view:
+    list: $/alexbeat/electro/models/productservice/columns.yaml
+    toolbarButtons: create|delete
+  manage:
+    form: $/alexbeat/electro/models/productservice/fields.yaml
+    list: $/alexbeat/electro/models/productservice/columns.yaml

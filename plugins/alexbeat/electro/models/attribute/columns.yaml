@@ -40,3 +40,7 @@ columns:
     select: (select name from oc_attribute_group_description where attribute_group_id = oc_attribute.attribute_group_id limit 1)
   sort_order:
     label: Сортировка
+  popup_description:
+    label: Описание в попапе
+    searchable: true
+    sortable: true    

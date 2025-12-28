@@ -1,14 +1,21 @@
 fields:
-    product_id:
-        label: Товар
-        span: full
-        type: text
-    attribute_id:
+    # product:
+    #     label: Товар
+    #     span: auto
+    #     type: relation
+    #     relation: product
+    attribute:
         label: Атрибут
-        type: text
+        type: relation
+        span: full
+        relation: attribute
     language_id:
         label: Язык
-        type: text
+        type: number
+        default: 1
+        hidden: 1
+        span: auto
     text:
         label: Значение
         type: text
+        span: full

@@ -32,6 +32,7 @@ class Product extends Model
 
     public $hasOne = [
         'description' => ['Alexbeat\Electro\Models\ProductDescription', 'key' => 'product_id', 'otherKey' => 'product_id'],
+        'product_description' => ['Alexbeat\Electro\Models\ProductDescription', 'key' => 'product_id', 'otherKey' => 'product_id'],
     ];
 
     public $hasMany = [
@@ -42,6 +43,23 @@ class Product extends Model
         'product_specials' => [
             'Alexbeat\Electro\Models\ProductSpecial', 'key' => 'product_id',
         ],
+
+        'product_attributes' => [
+            'Alexbeat\Electro\Models\ProductAttribute',
+            'table' => 'oc_product_attribute',
+            'key' => 'product_id',
+            // 'otherKey' => 'attribute_id',
+            // 'pivot' => ['product_id', 'attribute_id', 'language_id', 'text'],
+        ],
+
+        'services' => [
+            'Alexbeat\Electro\Models\ProductService',
+            'table' => 'alexbeat_electro_products_services',
+            'key' => 'product_id',
+            // 'otherKey' => 'service_product_id',
+            // 'pivot' => ['customer_group_id'],
+        ],
+
     ];
 
     public $belongsTo = [
@@ -74,6 +92,8 @@ class Product extends Model
             'otherKey' => 'store_id',
             'pivot' => ['product_id', 'store_id',],
         ],
+
+
     ];
 
 
@@ -157,6 +177,13 @@ class Product extends Model
     public function scopeActive($query)
     {
         return $query->where('status', 1);
+    }
+
+    public function scopeNotService($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('is_service', 0)->orWhereNull('is_service');
+        });
     }
 
     public function scopeNew($query)

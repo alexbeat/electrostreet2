@@ -56,6 +56,12 @@ class Category extends Model
             'key' => 'category_id',
             'otherKey' => 'category_id'
         ],
+
+        'services' => [
+            'Alexbeat\Electro\Models\CategoryProductService',
+            'table' => 'alexbeat_electro_category_product_services',
+            'key' => 'category_id',
+        ],          
     ];
 
     public $belongsToMany = [
@@ -77,6 +83,13 @@ class Category extends Model
             ],
         ],
     ];
+
+    //функция-мутатор для поля parent_id, чтобы записывалось не NULL, а 0 (это нужно для совместимости с opencart)
+    public function setParentIdAttribute($value)
+    {
+        $this->attributes['parent_id'] = $value ?: 0;
+    }
+
 
     // Функция для получения всех подкатегорий рекурсивно
     public function getAllSubCategories($categoryIds)

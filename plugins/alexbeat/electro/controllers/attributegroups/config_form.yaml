@@ -1,0 +1,13 @@
+name: 'Группы атрибутов'
+modelClass: Alexbeat\Electro\Models\AttributeGroup
+form: $/alexbeat/electro/models/attributegroup/fields.yaml
+defaultRedirect: alexbeat/electro/attributegroups
+create:
+    title: Создать
+    redirect: 'alexbeat/electro/attributegroups/update/:attribute_group_id'
+    redirectClose: alexbeat/electro/attributegroups
+update:
+    title: Изменить
+    redirect: alexbeat/electro/attributegroups
+    redirectClose: alexbeat/electro/attributegroups
+preview: {  }

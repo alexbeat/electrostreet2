@@ -11,11 +11,14 @@ class ProductDescription extends Model
     protected $table = 'oc_product_description';
     protected $primaryKey = 'product_id';
     public $incrementing = false;
-    public $timestamps = false;    
+    public $timestamps = false;
 
     public $rules = [];
 
-    public $belongTo = [
-        'product' => 'Alexbeat\Electro\Models\Product',
+    public $belongsTo = [
+        'product' => [
+            'Alexbeat\Electro\Models\Product',
+            'key' => 'product_id'
+        ],
     ];
 }

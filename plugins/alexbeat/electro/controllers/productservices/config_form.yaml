@@ -1,0 +1,10 @@
+name: ProductServices
+form: $/alexbeat/electro/models/productservice/fields.yaml
+modelClass: Alexbeat\Electro\Models\ProductService
+defaultRedirect: alexbeat/electro/productservices
+create:
+    redirect: 'alexbeat/electro/productservices/update/:id'
+    redirectClose: alexbeat/electro/productservices
+update:
+    redirect: alexbeat/electro/productservices
+    redirectClose: alexbeat/electro/productservices

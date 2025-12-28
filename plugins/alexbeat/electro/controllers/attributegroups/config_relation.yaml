@@ -1,0 +1,12 @@
+group_attributes:
+  label: Атрибуты
+  recordsPerPage: 10
+  view:
+    list: $/alexbeat/electro/models/attribute/columns.yaml
+    toolbarButtons: create|add|remove|delete
+    showSearch: true
+  manage:
+    form: $/alexbeat/electro/models/attribute/fields.yaml
+    list: $/alexbeat/electro/models/attribute/columns.yaml
+    showSearch: true
+
