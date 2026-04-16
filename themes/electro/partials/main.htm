@@ -33,9 +33,19 @@ function onStart() {
 
     $customer_group_id = input('customer_group_id');
 
-    $this['new_products'] = Product::active()->notService()->new()->orderBy('date_added', 'desc')->limit(15)->get();
-    $this['hit_products'] = Product::active()->notService()->hit()->orderBy('date_added', 'desc')->limit(15)->get();
+    $price_service = new \Alexbeat\Electro\Services\PriceService();
 
+    $new_products = Product::active()->notService()->notParts()->new()->orderBy('date_added', 'desc')->limit(15)->get();
+    $new_products->each(function ($product) use ($price_service) {
+        $product->cash_price = $price_service->getCashPrice($product->discount ? $product->discount : $product->price);
+    });
+    $this['new_products'] = $new_products;
+    
+    $hit_products = Product::active()->notService()->hit()->orderBy('date_added', 'desc')->limit(15)->get();
+    $hit_products->each(function ($product) use ($price_service) {
+        $product->cash_price = $price_service->getCashPrice($product->discount ? $product->discount : $product->price);
+    });
+    $this['hit_products'] = $hit_products;
 
     $order_raw = '
     CASE 
@@ -72,10 +82,12 @@ function onStart() {
 
         $card_atribute_ids = [];
 
-        $sale_products->each(function ($product) use ($card_atribute_ids) {
+        $sale_products->each(function ($product) use ($card_atribute_ids, $price_service) {
             $product->price = $product->discount ? $product->discount : $product->price;// берем региональную цену, если есть
             
             $product->skidka = number_format($product->price - $product->special, 0, '', ' ') . ' ₽';
+
+            $product->cash_price = $price_service->getCashPrice($product->special ?: $product->price);
 
             if (!empty($card_atribute_ids)) {
                 $product->card_attributes = $product->atributy()

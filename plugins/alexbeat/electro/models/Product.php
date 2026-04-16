@@ -186,6 +186,22 @@ class Product extends Model
         });
     }
 
+    public function scopeNotParts($query)
+    {
+        // ID категории, которую нужно исключить
+        $excludeCategoryId = 792;
+        
+        // Получаем саму категорию и все её дочерние ID
+        $categoryModel = Category::find($excludeCategoryId);
+        $excludedIds = $categoryModel 
+            ? $categoryModel->getAllSubCategories([$excludeCategoryId]) 
+            : [$excludeCategoryId];
+    
+        return $query->whereDoesntHave('categories', function ($q) use ($excludedIds) {
+            $q->whereIn('oc_product_to_category.category_id', $excludedIds);
+        });
+    }
+    
     public function scopeNew($query)
     {
         return $query->where('date_added', '>', now()->subDays(30));

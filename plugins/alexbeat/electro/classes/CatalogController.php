@@ -130,11 +130,11 @@ class CatalogController extends Controller
         // фильтр по цене
         if (input('price_from')) {
             //если price >= input('price_from') или discount >= input('price_from')
-            $products_query->where(function($query) use ($customer_group_id) { 
+            $products_query->where(function ($query) use ($customer_group_id) {
                 $query->where('price', '>=', input('price_from'))
-                // ->orWhere('discount', '>=', input('price_from'))
-                // ->orWhere('special', '>=', input('price_from'))
-                ; 
+                    // ->orWhere('discount', '>=', input('price_from'))
+                    // ->orWhere('special', '>=', input('price_from'))
+                ;
             });
         }
 
@@ -228,14 +228,25 @@ class CatalogController extends Controller
 
         $products_query = $products_query->paginate($per_page);
 
-        $products_query->each(function ($product) use ($card_atribute_ids) {
-            $product->price = $product->discount ? $product->discount : $product->price;// берем региональную цену, если есть
-            
+
+        $price_service = new \Alexbeat\Electro\Services\PriceService();        
+
+        $products_query->each(function ($product) use ($card_atribute_ids, $price_service) {
+            $product->price = $product->discount ? $product->discount : $product->price; // берем региональную цену, если есть
+
             // $product->special = $product->special ? $product->special : $product->discount;
             // if ($product->special > $product->price) {
             //     $product->price = $product->special;
             // }
             $product->skidka = number_format($product->price - $product->special, 0, '', ' ') . ' ₽';
+
+            $cash_available = input('is_cash_available');
+            if ($cash_available) {
+                $price_for_calc = $product->special ? $product->special : $product->price;
+                $product->cash_price = $price_service->getCashPrice($price_for_calc);
+            } else {
+                $product->cash_price = false;
+            }
 
             if (!empty($card_atribute_ids)) {
                 $product->card_attributes = $product->atributy()
@@ -285,183 +296,319 @@ class CatalogController extends Controller
 
 
 
+    // private function prepare_filter($category, $products_query)
+    // {
+    //     $filter_params_count = 0;
+
+    //     $productIds = $products_query->get()->pluck('product_id');
+
+    //     $atributy = $category->getFilterAttributes();
+
+    //     $atributy->each(function ($atribut) use ($productIds, &$filter_params_count) {
+    //         $pa_query = ProductAttribute::query()
+    //             ->where('attribute_id', $atribut->attribute_id)
+    //             ->whereIn('product_id', $productIds);
+
+    //         // trace_log($atribut->name.' '.$atribut->attribute_id.' '.$atribut->filter_type_id);
+
+    //         if ($atribut->filter_type_id == static::RANGE_TYPE) {
+    //             $atribut->type = 'slide';
+
+    //             // Преобразовываем текстовые данные в числа для поиска min и max
+    //             // Игнорируем пустые значения при вычислении минимального значения
+    //             $atribut->min = $pa_query
+    //                 ->where('text', '!=', '')
+    //                 ->selectRaw('MIN(CAST(text AS DECIMAL)) as min_value')
+    //                 ->value('min_value');
+
+    //             // Игнорируем пустые значения при вычислении максимального значения
+    //             $atribut->max = $pa_query
+    //                 ->where('text', '!=', '')
+    //                 ->selectRaw('MAX(CAST(text AS DECIMAL)) as max_value')
+    //                 ->value('max_value');
+
+    //             $atribut->from = input('attr' . $atribut->attribute_id . '_from', $atribut->min);
+    //             $atribut->to = input('attr' . $atribut->attribute_id . '_to', $atribut->max);
+    //             if ($atribut->from != $atribut->min) {
+    //                 $filter_params_count++;
+    //             }
+    //             if ($atribut->to != $atribut->max) {
+    //                 $filter_params_count++;
+    //             }
+    //         }
+
+    //         if ($atribut->filter_type_id == static::CHECKBOX_TYPE) {
+    //             $atribut->type = 'checkboxes';
+
+    //             // Правильное использование distinct и select
+    //             $uniqueTextsQuery = $pa_query->select('text')->distinct()->where('text', '!=', '');
+    //             $atribut->selected_count = $uniqueTextsQuery->count();
+    //             // echo $atribut->selected_count;
+
+    //             switch ($atribut->sort_type_id) {
+    //                 case static::SORT_TEXT_DESC:
+    //                     $uniqueTextsQuery->orderBy('text', 'desc');
+    //                     break;
+    //                 case static::SORT_NUMERIC_ASC:
+    //                     $uniqueTextsQuery->orderByRaw('CAST(text AS DECIMAL)');
+    //                     break;
+    //                 case static::SORT_NUMERIC_DESC:
+    //                     $uniqueTextsQuery->orderByRaw('CAST(text AS DECIMAL) DESC');
+    //                 default:
+    //                     $uniqueTextsQuery->orderBy('text', 'asc');
+    //             }
+
+
+    //             // Получение уникальных значений
+    //             $atribut->values = $uniqueTextsQuery->take(30)->get(); //берем макс. 30
+
+    //             $search_values = (array)input('attr' . $atribut->attribute_id);
+    //             // $search_values = (array)explode(',', input('attr' . $atribut->attribute_id));
+    //             // print_r($search_values);
+
+    //             $selected_count = 0;
+    //             $atribut->values->each(function ($value) use ($search_values, &$selected_count) {
+    //                 if (in_array($value->text, $search_values)) {
+    //                     $value->checked = true;
+    //                     $selected_count++;
+    //                 } else {
+    //                     $value->checked = false;
+    //                 }
+    //             });
+    //             $atribut->selected_count = $selected_count;
+    //             if ($selected_count) $filter_params_count++;
+
+    //             // print_r($atribut->values->toArray());
+    //         }
+
+    //         if ($atribut->filter_type_id == static::SWITCH_TYPE) $atribut->type = 'switch';
+    //     });
+
+
+
+    //     $manufacturerIds = $products_query->distinct()->pluck('manufacturer_id');
+    //     $manufacturers = Manufacturer::whereIn('manufacturer_id', $manufacturerIds)->orderBy('name')->get();
+    //     $search_manufacturers = explode(',', input('manufacturers'));
+    //     $manufacturers_checked_count = 0;
+    //     $manufacturers->each(function ($manufacturer) use ($search_manufacturers, &$manufacturers_checked_count) {
+    //         if (in_array($manufacturer->manufacturer_id, $search_manufacturers)) {
+    //             $manufacturer->checked = true;
+    //             $manufacturers_checked_count++;
+    //         }
+    //     });
+    //     if ($manufacturers_checked_count) $filter_params_count++;
+
+    //     $price_min = (int)$products_query->min('price');
+    //     $price_max = (int)$products_query->max('price');
+
+
+
+    //     $data = [];
+    //     $data['sort'] = input('sort');
+    //     $data['order'] = input('order');
+    //     if ($data['sort'] || $data['order']) $filter_params_count++;
+
+    //     // Массив с опциями сортировки
+    //     $data['sort_options'] = [
+    //         [
+    //             'title' => 'По рейтингу',
+    //             'sort'  => 'p.rating',
+    //             'order' => 'DESC'
+    //         ],
+    //         [
+    //             'title' => 'Сначала со скидкой',
+    //             'sort'  => 'best_discount',
+    //             'order' => 'DESC'
+    //         ],
+    //         [
+    //             'title' => 'Сначала дешевле',
+    //             'sort'  => 'p.price',
+    //             'order' => 'ASC'
+    //         ],
+    //         [
+    //             'title' => 'Сначала дороже',
+    //             'sort'  => 'p.price',
+    //             'order' => 'DESC'
+    //         ],
+    //         [
+    //             'title' => 'Сначала новинки',
+    //             'sort'  => 'p.date_added',
+    //             'order' => 'DESC'
+    //         ],
+    //         [
+    //             'title' => 'Сначала популярные',
+    //             'sort'  => 'p.hit',
+    //             'order' => 'DESC'
+    //         ],
+    //     ];
+
+    //     // Установить sort_title на основе выбора сортировки и порядка
+    //     $data['sort_title'] = '';
+    //     foreach ($data['sort_options'] as $option) {
+    //         if ($data['sort'] === $option['sort'] && $data['order'] === $option['order']) {
+    //             $data['sort_title'] = $option['title'];
+    //             break;
+    //         }
+    //     }
+
+    //     $filter = [
+    //         'atributy' => $atributy,
+    //         'manufacturers' => $manufacturers,
+    //         'manufacturers_checked_count' => $manufacturers_checked_count,
+    //         'in_stock' => input('in_stock'),
+    //         'sort_title' => $data['sort_title'],
+    //         'sort_options' => $data['sort_options'],
+    //         'sort' => $data['sort'],
+    //         'order' => $data['order'],
+    //         'price_from' => input('price_from'),
+    //         'price_to' => input('price_to'),
+    //         'price_min' => $price_min,
+    //         'price_max' => $price_max,
+    //         'filters_count' => $filter_params_count,
+    //     ];
+
+    //     $filter_content = $this->renderPartial('category_filter', [
+    //         'filter' => $filter,
+    //     ]);
+
+    //     return $filter_content;
+    // }
+
     private function prepare_filter($category, $products_query)
     {
         $filter_params_count = 0;
-
-        $productIds = $products_query->get()->pluck('product_id');
-
+    
+        // ОПТИМИЗАЦИЯ 1: Получаем только ID (массив чисел), а не коллекцию моделей.
+        // Используем клон, чтобы не наложить лимиты на основной запрос.
+        $productIds = (clone $products_query)->pluck('oc_product.product_id')->toArray();
+    
+        // Если товаров нет, возвращаем пустой фильтр сразу
+        if (empty($productIds)) {
+            return $this->renderPartial('category_filter', ['filter' => ['filters_count' => 0]]);
+        }
+    
         $atributy = $category->getFilterAttributes();
-
-        $atributy->each(function ($atribut) use ($productIds, &$filter_params_count) {
-            $pa_query = ProductAttribute::query()
+    
+        foreach ($atributy as $atribut) {
+            // ОПТИМИЗАЦИЯ 2: Работаем через Query Builder (Db::table) вместо модели ProductAttribute
+            $pa_query = \Db::table('oc_product_attribute')
                 ->where('attribute_id', $atribut->attribute_id)
                 ->whereIn('product_id', $productIds);
-
-            // trace_log($atribut->name.' '.$atribut->attribute_id.' '.$atribut->filter_type_id);
-
+    
             if ($atribut->filter_type_id == static::RANGE_TYPE) {
                 $atribut->type = 'slide';
-
-                // Преобразовываем текстовые данные в числа для поиска min и max
-                // Игнорируем пустые значения при вычислении минимального значения
-                $atribut->min = $pa_query
+    
+                $stats = $pa_query
                     ->where('text', '!=', '')
-                    ->selectRaw('MIN(CAST(text AS DECIMAL)) as min_value')
-                    ->value('min_value');
-
-                // Игнорируем пустые значения при вычислении максимального значения
-                $atribut->max = $pa_query
-                    ->where('text', '!=', '')
-                    ->selectRaw('MAX(CAST(text AS DECIMAL)) as max_value')
-                    ->value('max_value');
-
+                    ->selectRaw('MIN(CAST(text AS DECIMAL)) as min_val, MAX(CAST(text AS DECIMAL)) as max_val')
+                    ->first();
+    
+                $atribut->min = $stats->min_val;
+                $atribut->max = $stats->max_val;
+    
                 $atribut->from = input('attr' . $atribut->attribute_id . '_from', $atribut->min);
                 $atribut->to = input('attr' . $atribut->attribute_id . '_to', $atribut->max);
-                if ($atribut->from != $atribut->min) {
-                    $filter_params_count++;
-                }
-                if ($atribut->to != $atribut->max) {
-                    $filter_params_count++;
-                }
+                
+                if ($atribut->from != $atribut->min) $filter_params_count++;
+                if ($atribut->to != $atribut->max) $filter_params_count++;
             }
-
+    
             if ($atribut->filter_type_id == static::CHECKBOX_TYPE) {
                 $atribut->type = 'checkboxes';
-
-                // Правильное использование distinct и select
+    
                 $uniqueTextsQuery = $pa_query->select('text')->distinct()->where('text', '!=', '');
-                $atribut->selected_count = $uniqueTextsQuery->count();
-                // echo $atribut->selected_count;
-
+    
+                // Сортировка (оставляем вашу логику)
                 switch ($atribut->sort_type_id) {
-                    case static::SORT_TEXT_DESC:
-                        $uniqueTextsQuery->orderBy('text', 'desc');
-                        break;
-                    case static::SORT_NUMERIC_ASC:
-                        $uniqueTextsQuery->orderByRaw('CAST(text AS DECIMAL)');
-                        break;
-                    case static::SORT_NUMERIC_DESC:
-                        $uniqueTextsQuery->orderByRaw('CAST(text AS DECIMAL) DESC');
-                    default:
-                        $uniqueTextsQuery->orderBy('text', 'asc');
+                    case static::SORT_TEXT_DESC: $uniqueTextsQuery->orderBy('text', 'desc'); break;
+                    case static::SORT_NUMERIC_ASC: $uniqueTextsQuery->orderByRaw('CAST(text AS DECIMAL)'); break;
+                    case static::SORT_NUMERIC_DESC: $uniqueTextsQuery->orderByRaw('CAST(text AS DECIMAL) DESC'); break;
+                    default: $uniqueTextsQuery->orderBy('text', 'asc');
                 }
-
-
-                // Получение уникальных значений
-                $atribut->values = $uniqueTextsQuery->take(30)->get(); //берем макс. 30
-
+    
+                // Ограничиваем выборку, чтобы не перегружать интерфейс
+                $atribut->values = $uniqueTextsQuery->take(30)->get();
+    
                 $search_values = (array)input('attr' . $atribut->attribute_id);
-                // $search_values = (array)explode(',', input('attr' . $atribut->attribute_id));
-                // print_r($search_values);
-
                 $selected_count = 0;
-                $atribut->values->each(function ($value) use ($search_values, &$selected_count) {
+    
+                foreach ($atribut->values as $value) {
                     if (in_array($value->text, $search_values)) {
                         $value->checked = true;
                         $selected_count++;
                     } else {
                         $value->checked = false;
                     }
-                });
+                }
                 $atribut->selected_count = $selected_count;
                 if ($selected_count) $filter_params_count++;
-
-                // print_r($atribut->values->toArray());
             }
-
+    
             if ($atribut->filter_type_id == static::SWITCH_TYPE) $atribut->type = 'switch';
-        });
-
-
-
-        $manufacturerIds = $products_query->distinct()->pluck('manufacturer_id');
+        }
+    
+        // ОПТИМИЗАЦИЯ 3: Производители
+        $manufacturerIds = (clone $products_query)->distinct()->pluck('manufacturer_id')->filter()->toArray();
         $manufacturers = Manufacturer::whereIn('manufacturer_id', $manufacturerIds)->orderBy('name')->get();
-        $search_manufacturers = explode(',', input('manufacturers'));
+        
+        $search_manufacturers = explode(',', (string)input('manufacturers'));
         $manufacturers_checked_count = 0;
-        $manufacturers->each(function ($manufacturer) use ($search_manufacturers, &$manufacturers_checked_count) {
+        foreach ($manufacturers as $manufacturer) {
             if (in_array($manufacturer->manufacturer_id, $search_manufacturers)) {
                 $manufacturer->checked = true;
                 $manufacturers_checked_count++;
             }
-        });
+        }
         if ($manufacturers_checked_count) $filter_params_count++;
-
-        $price_min = (int)$products_query->min('price');
-        $price_max = (int)$products_query->max('price');
-
-
-
-        $data = [];
-        $data['sort'] = input('sort');
-        $data['order'] = input('order');
-        if ($data['sort'] || $data['order']) $filter_params_count++;
-
-        // Массив с опциями сортировки
-        $data['sort_options'] = [
-            [
-                'title' => 'По рейтингу',
-                'sort'  => 'p.rating',
-                'order' => 'DESC'
-            ],
-            [
-                'title' => 'Сначала со скидкой',
-                'sort'  => 'best_discount',
-                'order' => 'DESC'
-            ],
-            [
-                'title' => 'Сначала дешевле',
-                'sort'  => 'p.price',
-                'order' => 'ASC'
-            ],
-            [
-                'title' => 'Сначала дороже',
-                'sort'  => 'p.price',
-                'order' => 'DESC'
-            ],
-            [
-                'title' => 'Сначала новинки',
-                'sort'  => 'p.date_added',
-                'order' => 'DESC'
-            ],
-            [
-                'title' => 'Сначала популярные',
-                'sort'  => 'p.hit',
-                'order' => 'DESC'
-            ],
+    
+        // ОПТИМИЗАЦИЯ 4: Цены (используем клон запроса без with() и order)
+        $priceStats = (clone $products_query)->selectRaw('MIN(price) as min_p, MAX(price) as max_p')->first();
+        $price_min = (int)($priceStats->min_p ?? 0);
+        $price_max = (int)($priceStats->max_p ?? 0);
+    
+        // Данные для сортировки (ваш массив)
+        $sort_options = [
+            ['title' => 'По рейтингу', 'sort' => 'p.rating', 'order' => 'DESC'],
+            ['title' => 'Сначала со скидкой', 'sort' => 'best_discount', 'order' => 'DESC'],
+            ['title' => 'Сначала дешевле', 'sort' => 'p.price', 'order' => 'ASC'],
+            ['title' => 'Сначала дороже', 'sort' => 'p.price', 'order' => 'DESC'],
+            ['title' => 'Сначала новинки', 'sort' => 'p.date_added', 'order' => 'DESC'],
+            ['title' => 'Сначала популярные', 'sort' => 'p.hit', 'order' => 'DESC'],
         ];
-
-        // Установить sort_title на основе выбора сортировки и порядка
-        $data['sort_title'] = '';
-        foreach ($data['sort_options'] as $option) {
-            if ($data['sort'] === $option['sort'] && $data['order'] === $option['order']) {
-                $data['sort_title'] = $option['title'];
+    
+        $current_sort = input('sort');
+        $current_order = input('order');
+        if ($current_sort || $current_order) $filter_params_count++;
+    
+        $sort_title = '';
+        foreach ($sort_options as $option) {
+            if ($current_sort === $option['sort'] && $current_order === $option['order']) {
+                $sort_title = $option['title'];
                 break;
             }
         }
-
+    
         $filter = [
             'atributy' => $atributy,
             'manufacturers' => $manufacturers,
             'manufacturers_checked_count' => $manufacturers_checked_count,
             'in_stock' => input('in_stock'),
-            'sort_title' => $data['sort_title'],
-            'sort_options' => $data['sort_options'],
-            'sort' => $data['sort'],
-            'order' => $data['order'],
+            'sort_title' => $sort_title,
+            'sort_options' => $sort_options,
+            'sort' => $current_sort,
+            'order' => $current_order,
             'price_from' => input('price_from'),
             'price_to' => input('price_to'),
             'price_min' => $price_min,
             'price_max' => $price_max,
             'filters_count' => $filter_params_count,
         ];
-
-        $filter_content = $this->renderPartial('category_filter', [
-            'filter' => $filter,
-        ]);
-
-        return $filter_content;
+    
+        return $this->renderPartial('category_filter', ['filter' => $filter]);
     }
+    
+
+
 
 
     protected function buildUrlWithParams($baseUrl, $params)
@@ -494,4 +641,11 @@ class CatalogController extends Controller
 
         return $url;
     }
+
+    public function getCashPrice($value)
+    {
+        $discount = 1 - 0.11;
+        return ceil(($value * $discount) / 50) * 50;
+    }
+
 }

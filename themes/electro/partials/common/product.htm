@@ -117,11 +117,20 @@
 </div><a href="{{ product.href }}"><b>{{ product.name }}</b></a>
 <div class="product__price">
     <div class="price">
+        {#
         {% if product.special and product.special < product.price %}
             <s>{{ product.price|formatPrice }}</s><span>{{ product.special|formatPrice }}</span>
         {% else %}
             <span>{{ product.price|formatPrice }}</span>
         {% endif %}
+        #}
+
+        {% if product.special and product.special < product.price %}
+            <s>{{ product.price|formatPrice }}</s>
+            <span>{{ product.cash_price ? 'от ' ~ product.cash_price|formatPrice : product.special|formatPrice }}</span>
+        {% else %}
+            <span>{{ product.cash_price ? 'от ' ~ product.cash_price|formatPrice : product.price|formatPrice }}</span>
+        {% endif %}        
     </div>
     <div class="product__btns">
         <div class="product__links">
@@ -137,7 +146,7 @@
         </div>
         
         {% if (product.quantity > 0) %}
-            <a class="btn" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"
+            <a class="btn" onclick="sendDataForEcommerceYandexMetrica({id: {{ product.product_id }},event: 'add',id_type: 'product_id',quantity: 1});cart.add('{{ product.product_id }}', '{{ product.minimum }}');"
             style="cursor: pointer;">В корзину</a>
         {% else %}
             <a class="btn" href="{{ product.href }}">Уточнить наличие</a>

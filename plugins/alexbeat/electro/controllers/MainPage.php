@@ -21,4 +21,16 @@ class MainPage extends Controller
         parent::__construct();
         BackendMenu::setContext('Alexbeat.Electro', 'electro-pages', 'electro-main-page');
     }
+
+    public function index()
+    {
+        $model = $this->formCreateModelObject()->first();
+
+        if (!$model) {
+            $model = $this->formCreateModelObject();
+            $model->forceSave();
+        }
+
+        return Backend::redirect("alexbeat/electro/mainpage/update/{$model->id}");
+    }    
 }

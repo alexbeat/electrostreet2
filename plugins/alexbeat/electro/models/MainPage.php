@@ -45,7 +45,7 @@ class MainPage extends \System\Models\SettingModel
     
         Product::with('description')->orderBy('product_id')->chunk(100, function ($products) use (&$productOptions) {
             foreach ($products as $product) {
-                $productOptions[$product->product_id] = $product->description->name;
+                $productOptions[$product->product_id] = $product->description?->name;
             }
         });
     
